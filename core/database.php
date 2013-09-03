@@ -1,0 +1,400 @@
+<?php
+namespace Core;
+/**
+ * Database management and access class
+ * This is a very basic level of abstraction
+ */
+if ( ! defined( 'GGFW' ) )
+{
+	echo 'This file can only be called via the main index.php file, and not directly';
+	exit();
+}
+
+class Database {
+	
+	/**
+	 * Record the connection
+	 */
+	private $_connection;
+	/**
+	 * Queries which have been executed and then "saved for later"
+	 */
+	// private $_queryCache = array();
+	
+	/**
+	 * Store the query to be built
+	 * 
+	 * @var String PDO Prepared statement string
+	 */
+	private $_query;
+	
+	/**
+	 * Record the statement data for use in the prepared statement
+	 * 
+	 * @var Associative Array
+	 */
+	private $_stmtData = array ();
+	
+	/**
+	 * The PDO statement to be executed
+	 * 
+	 * @var PDOStatement
+	 */
+	private $_stmt;
+	
+	/**
+	 * Data which has been prepared and then "saved for later"
+	 */
+	private $_dataCache = array ();
+	
+	/**
+	 * Record of the last query
+	 */
+	private $_last;
+	
+	public function __construct() {
+	}
+	
+	/**
+	 * Create a new database connection using PDO
+	 * 
+	 * @param string $host        	
+	 * @param string $dbname        	
+	 * @param string $username        	
+	 * @param string $passwd        	
+	 * @param string $options        	
+	 */
+	public function newConnection($host, $dbname, $username, $passwd, $options = NULL) {
+		// setting default options if not provided
+		$options || $options = array (
+				\PDO::MYSQL_ATTR_FOUND_ROWS => TRUE 
+		);
+		
+		try {
+			// connect to the database
+			$this->_connection = new \PDO ( 'mysql:host=' . $host . ';dbname=' . $dbname, $username, $passwd, $options );
+			
+			// set the error codes
+			$this->_connection->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+		} catch ( PDOException $e ) {
+			trigger_error ( 'Error connecting to host: ' . $e->getMessage (), E_USER_ERROR );
+		}
+	}
+	
+	
+	
+	/**
+	 * All purpose query functionality. To be used when no other option is available
+	 * @param String $query the sql query to be performed
+	 * @return array of data fetched from database
+	 */
+	public function query($query)
+	{
+		$this->_query = filter_var($query, FILTER_SANITIZE_STRING);
+		
+		$this->_prepareQuery();
+		
+		$this->_executeQuery();
+		
+		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		
+		return $results;
+	}
+	
+	
+	/**
+	 * Select in a table with options
+	 * 
+	 * @param String $table
+	 *        	to query
+	 * @param Array $params
+	 *        	-
+	 *        	Format: array(
+	 *        	'fields' => array(
+	 *        		'field1, 
+	 *        		'field2'
+	 *        	),
+	 *        	'where' => array(
+	 *        		'field1' => 'value1',
+	 *        		'field2' => 'value2'
+	 *        	),
+	 *        	'order' => array(
+	 *       	 	'fields' => array('field1', 'field2'),
+	 *     		   	'order' => 'ASC' // optional
+	 *        	),
+	 *        	'limit' => 1
+	 *        	)
+	 */
+	public function select($table, $params = NULL) {
+		// If no parameters provided select everything from the table
+		if (gettype ( $params ) !== 'array') {
+			
+			$this->_query = "SELECT * FROM $table";
+		} else {
+			
+			// add fields clause
+			if (! isset ( $params ['fields'] )) {
+				
+				$this->_query = "SELECT * FROM $table ";
+			} else {
+				$this->_query = "SELECT " . implode ( ',', $params ['fields'] ) . " FROM $table ";
+			}
+			
+			// process parameters
+			$this->_processParams ( $params );
+		}
+		
+		$this->_prepareQuery ();
+		
+		$this->_executeQuery ();
+		
+		$results = $this->_stmt->fetchAll ( \PDO::FETCH_ASSOC );
+		
+		return $results;
+	}
+	
+	
+	/**
+	 * Insert in a table a new record
+	 * 
+	 * @param String $table
+	 *        	to query
+	 * @param Array $insertData
+	 *        	-
+	 *        	Format: array(
+	 *        	'field1' => 'value1',
+	 *        	'field2' => 'value2'
+	 *        	)
+	 *        
+	 * @return TRUE || PDO Error information
+	 */
+	public function insert($table, $insertData) 
+	{
+		// Set up the stmtData to be equal to the data to be inserted
+		$this->_stmtData = $insertData;
+		
+		// initiate the query to be an INSERT
+		$this->_query = "INSERT INTO $table ";
+		
+		{// prepare the VALUES part of the query
+			$keys = array_keys ( $insertData );
+			
+			// add the field titles from the data array keys
+			$this->_query .= ' (' . implode ( ',', $keys ) . ') ';
+			
+			// construct the named paramters:
+			$named_parameters = array_map ( function ($key) {
+				return ':' . $key;
+			}, $keys );
+			
+			// Add the the named parameters to the query
+			$this->_query .= ' VALUES (' . implode ( ',', $named_parameters ) . ') ';
+		}
+	
+		$this->_prepareQuery();
+		
+		$result = $this->_executeQuery();
+		if ($result !== TRUE) {
+			return $result;
+		} else {
+			return (int) $this->_connection->lastInsertId();
+		}
+		return ;
+	}
+	
+	
+	/**
+	 * Update a record in a table
+	 *
+	 * @param String $table to query
+	 * @param Array $recordId - Format array('primary key' => 'value')
+	 * @param Array $updateData
+	 *        	-
+	 *        	Format: array(
+	 *        	'field1' => 'value1',
+	 *        	'field2' => 'value2'
+	 *        	)
+	 * @return TRUE || PDO Error information
+	 */
+	public function update($table, $recordId, $updateData) 
+	{
+		// initiate the query to be an UPDATE
+		$this->_query = "UPDATE $table ";
+		
+		{ // create the SET part of the query
+			$keys = array_keys ( $updateData );
+			
+			$update_parameters = array_map(function($key){
+				return $key . '=:' . $key;
+			}, $keys );
+			
+			$this->_query .= ' SET ' . implode(',', $update_parameters ) . ' ';
+		}
+		
+		{ // create where clause with 'id' = $id
+			$primaryKey = array_keys($recordId)[0]; // recover the primary key
+			
+			$this->_where ( array (
+					$primaryKey => (int) $recordId[$primaryKey]
+			) );
+		}
+		
+		// merge the updateData with the stmtData
+		$this->_stmtData =  array_merge($updateData, $this->_stmtData);
+
+		$this->_prepareQuery ();
+		
+		return $this->_executeQuery ();
+	}
+	
+	
+	/**
+	 * Delete a record in a table
+	 *
+	 * @param String $table to query
+	 * @param Array $recordId - Format array('primary key' => 'value')
+	 * @return TRUE || PDO Error information
+	 */
+	public function delete($table, $recordId) 
+	{
+		$this->_query = "DELETE FROM $table ";
+		
+		{ // create where clause with $recordId
+			$primaryKey = array_keys($recordId)[0]; // recover the primary key
+				
+			$this->_where ( array (
+					$primaryKey => (int) $recordId[$primaryKey]
+			) );
+		}
+		
+		$this->_prepareQuery ();
+	
+		return $this->_executeQuery ();
+	}
+	
+	
+	
+	/**
+	 * Prepare the query and perform some error management
+	 * 
+	 * @return void
+	 */
+	private function _prepareQuery() 
+	{
+		if (! $stmt = $this->_connection->prepare ( $this->_query )) {
+			trigger_error ( 'Problem preparing query', E_USER_ERROR );
+		}
+		$this->_stmt = $stmt;
+	}
+	
+	
+	/**
+	 * execute query and return sucess/failure of execution
+	 * 
+	 * @return boolean PDOStatement::errorInfo
+	 */
+	private function _executeQuery() 
+	{
+		$this->_stmt->execute ( $this->_stmtData );
+		
+		if ($this->_stmt->rowCount () > 0) {
+			return true;
+		} else {
+			return $this->_stmt->errorInfo();
+		}
+	}
+	
+	
+	/**
+	 * Process common query parameters and call relevant subfunction
+	 * 
+	 * @param array $params
+	 *        	see select, insert, update, delete functions for format definition
+	 * @return void
+	 */
+	private function _processParams($params) 
+	{
+		// if provided a where clause call _where private function
+		! isset ( $params ['where'] ) || $this->_where ( $params ['where'] );
+		
+		// if provided an order clause cal _order private function
+		! isset ( $params ['order'] ) || $this->_order ( $params ['order'] );
+		
+		// if provided a limit clause call _limit private function
+		! isset ( $params ['limit'] ) || $this->_limit ( $params ['limit'] );
+	}
+	
+	
+	/**
+	 * Prepare WHERE clause - only handling AND data for now - and adds it to the query
+	 * 
+	 * @param Array $whereData:
+	 *        	conditions to be aggregated with the AND operator.
+	 *        	Format:	array(
+	 *        	'field1' => 'value1',
+	 *        	'field2' => 'value2'
+	 *        	)
+	 * @return void
+	 */
+	private function _where($whereData) 
+	{
+		// record the where data inside the object statement data for further use.
+		$this->_stmtData = $whereData;
+		
+		// Fetch the field names
+		$fields = array_keys ( $whereData );
+		
+		// initiating the where clause
+		$where_clause = ' WHERE ';
+		
+		// setting up a counter
+		$count = 1;
+		
+		foreach ( $fields as $field ) {
+			$where_clause .= $field . "=:" . $field;
+			
+			// For all iterations besides the last one add an AND operator
+			if ($count < count ( $fields )) {
+				$count ++;
+				$where_clause .= ' AND ';
+			}
+		}
+		
+		$this->_query .= $where_clause;
+	}
+	
+	
+	/**
+	 * Create a sql Order clause and adds it to the query
+	 * 
+	 * @param array $orderData.
+	 *        	Format: array(
+	 *        	'fields' => array('field1', 'field2'),
+	 *        	'order' => 'ASC'
+	 *        	)
+	 * @return void
+	 */
+	private function _order($orderData) 
+	{
+		// if no order is supplied, default to DESC
+		isset ( $orderData ['order'] ) || $orderData ['order'] = 'DESC';
+		
+		$this->_query .= " ORDER BY " . implode ( ',', $orderData ['fields'] ) . ' ' . $orderData ['order'];
+	}
+	
+	
+	/**
+	 * Create a sql limit clause and adds it to the query
+	 * 
+	 * @param int $numRows        	
+	 * @return void
+	 */
+	private function _limit($numRows) 
+	{
+		$this->_query .= " LIMIT " . ( int ) $numRows;
+	}
+	
+	public function __destruct() {
+		$this->_connection = null;
+	}
+}
