@@ -45,7 +45,6 @@ class Helpers {
 		return $html;
 	}
 	
-	//TODO add options to helpers
 	public function input($name, $options = array()) 
 	{
 		$html = '<input type="text" id="'. $name . '" name="'. $name . '"';

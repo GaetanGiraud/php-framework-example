@@ -8,7 +8,10 @@ class Posts extends \Core\Controller {
 	 * Index of all posts
 	 */
 	public function index() {
-		$posts = \Models\Posts::get();
+		$order = array ('fields' => array ('id'),
+						'order' => 'DESC' );
+		
+		$posts = \Models\Posts::get($order, 10);
 		
 		$data = array('posts' => $posts );
 		
@@ -24,7 +27,7 @@ class Posts extends \Core\Controller {
 			header('location: /posts');
 			exit();
 		} else {
-			$post = \Models\Posts::find(array('id' => $this->_recordId));
+			$post = \Models\Posts::find($this->_recordId);
 		}
 		
 		$this->view('posts/edit', array('post' => $post));
@@ -62,7 +65,7 @@ class Posts extends \Core\Controller {
 	 * Show a post
 	 */
 	public function show() {
-		$post = \Models\Posts::find(array('id' => $this->_recordId));
+		$post = \Models\Posts::find($this->_recordId);
 		
 		if($post) {
 			$this->view('posts/show', array('post' => $post));
@@ -77,10 +80,10 @@ class Posts extends \Core\Controller {
 	 */
 	public function update() {
 		// retrieve the post record
-		$post = \Models\Posts::find(array('id' => $_POST['id']));
+		$post = \Models\Posts::find($_POST['id']);
 		
 		// update the post record object
-		$post->update($_POST);
+		$post->set($_POST);
 		
 		// save in the database
 		if ($post->save()) {
@@ -97,7 +100,7 @@ class Posts extends \Core\Controller {
 	 */
 	public function delete() {
 		// retrieve the post
-		$post = \Models\Posts::find(array('id' => $this->_recordId));
+		$post = \Models\Posts::find($this->_recordId);
 	
 		// delete the post
 		if($post->delete()) {

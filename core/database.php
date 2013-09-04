@@ -421,23 +421,28 @@ class Database {
 		{
 			return FALSE;
 		}
-	
+		
+		// only valid for MySQL
 		$sql = 'SHOW COLUMNS FROM ' . $table ;
 					
 		$results = $this->query($sql);
+		
+		$retval = array();
+		
 
+		
 		foreach ($results as $row)
 		{
-			if (isset($row['FIELD']))
+			if (isset($row['Field']))
 			{
+				$retval[] = $row['Field'];
+			} else if (isset($row['FIELD'])) {
 				$retval[] = $row['FIELD'];
-			}
-			else
-			{
+			} else {
 				$retval[] = current($row);
 			}
 		}
-	
+
 		$this->data_cache['field_names'][$table] = $retval;
 		return $this->data_cache['field_names'][$table]; 
 	}
@@ -454,8 +459,8 @@ class Database {
 	
 	private function _sanitizeData($table, $data, $id = null) {		
 		// remove the id from the data
-		! $id || $updateData =  array_diff_key($updateData, $recordId);
-		
+		! $id || $data =  array_diff_key($data, $id);
+
 		// keep only the fields that actuallty exist in the database
 		return array_intersect_key($data, array_flip($this->_list_fields($table)));
 	}

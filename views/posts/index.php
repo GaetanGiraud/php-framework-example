@@ -15,11 +15,11 @@
 <tbody>
 	<?php foreach($posts as $post):?>
 		<tr>
-			<td><?= $post['id']; ?></td>
-			<td><a href="/posts/<?= $post['id'] ?>"><?= $post['title']; ?></a></td>
+			<td><?= $post->id; ?></td>
+			<td><a href="/posts/<?= $post->id ?>"><?= $post->title; ?></a></td>
 			<td>
-			<a href="/posts/<?= $post['id'] ?>/edit">Edit</a> 
-			<a href="/posts/<?= $post['id'] ?>/delete">Delete</a> 
+			<a href="/posts/<?= $post->id ?>/edit">Edit</a> 
+			<a href="/posts/<?= $post->id ?>/delete">Delete</a> 
 			</td>
 		</tr>
 	<?php endforeach; ?>
