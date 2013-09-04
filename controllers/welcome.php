@@ -9,6 +9,6 @@ class Welcome extends \Core\Controller {
 	}
 	
 	public function index() {
-		echo 'Infinite loop prevented ! <br />';
+		$this->view('index');
 	}
 }

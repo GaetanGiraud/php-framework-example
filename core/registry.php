@@ -41,6 +41,7 @@ class Registry {
 	{
 		$this->storeObject('Core\Database', 'db' );
 		$this->storeObject('Core\Router', 'router' );
+		$this->storeObject('Core\Helpers', 'helpers' );
 	}
 	
 	/**
@@ -53,7 +54,6 @@ class Registry {
 	public static function singleton() 
 	{
 		if (! isset ( self::$instance )) {
-			//$obj = __CLASS__;
 			self::$instance = new self();
 		}
 		
@@ -76,10 +76,6 @@ class Registry {
 	 */
 	public function storeObject($object, $key)
 	{	 
-		// Convert the object and its namespace into an absolute path
-		$objectPath = APP_PATH . '/' . strtolower(str_replace('\\', '/', $object)) . '.php';
-		require_once $objectPath;
-	
 		self::$objects[ $key ] = new $object( self::$instance );
 	}
 	
@@ -90,6 +86,8 @@ class Registry {
 	 */
 	public function getObject($key)
 	{
+		//TODO create a simpler load mechanism to perform both actions
+		
 		if (is_object ( self::$objects [$key] )) {
 			return self::$objects[$key];
 		}
@@ -103,6 +101,7 @@ class Registry {
 	 */
 	public function storeSetting($data, $key)
 	{
+		//TODO load config file inside settings
 		self::$settings [ $key ] = $data;
 	}
 	

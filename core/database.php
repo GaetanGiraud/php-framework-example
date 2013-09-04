@@ -65,6 +65,7 @@ class Database {
 	 * @param string $options        	
 	 */
 	public function newConnection($host, $dbname, $username, $passwd, $options = NULL) {
+		//TODO get db info from configuration
 		// setting default options if not provided
 		$options || $options = array (
 				\PDO::MYSQL_ATTR_FOUND_ROWS => TRUE 
@@ -96,7 +97,7 @@ class Database {
 		
 		$this->_executeQuery();
 		
-		$results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		$results = $this->_stmt->fetchAll(\PDO::FETCH_ASSOC);
 		
 		return $results;
 	}
@@ -169,8 +170,11 @@ class Database {
 	 * @return TRUE || PDO Error information
 	 */
 	public function insert($table, $insertData) 
-	{
-		// Set up the stmtData to be equal to the data to be inserted
+	{	
+		// Sanitize the data and 
+		$insertData = $this->_sanitizeData($table, $insertData);
+		
+		// store the data in the stmtData variable for further use
 		$this->_stmtData = $insertData;
 		
 		// initiate the query to be an INSERT
@@ -197,7 +201,7 @@ class Database {
 		if ($result !== TRUE) {
 			return $result;
 		} else {
-			return (int) $this->_connection->lastInsertId();
+			return $this->_connection->lastInsertId();
 		}
 		return ;
 	}
@@ -217,7 +221,10 @@ class Database {
 	 * @return TRUE || PDO Error information
 	 */
 	public function update($table, $recordId, $updateData) 
-	{
+	{	
+		// sanitize the data
+		$updateData = $this->_sanitizeData($table, $updateData, $recordId);
+		
 		// initiate the query to be an UPDATE
 		$this->_query = "UPDATE $table ";
 		
@@ -231,7 +238,7 @@ class Database {
 			$this->_query .= ' SET ' . implode(',', $update_parameters ) . ' ';
 		}
 		
-		{ // create where clause with 'id' = $id
+		{ // create where clause
 			$primaryKey = array_keys($recordId)[0]; // recover the primary key
 			
 			$this->_where ( array (
@@ -239,6 +246,7 @@ class Database {
 			) );
 		}
 		
+		//TODO Better management of data in update statement
 		// merge the updateData with the stmtData
 		$this->_stmtData =  array_merge($updateData, $this->_stmtData);
 
@@ -315,13 +323,13 @@ class Database {
 	private function _processParams($params) 
 	{
 		// if provided a where clause call _where private function
-		! isset ( $params ['where'] ) || $this->_where ( $params ['where'] );
+		! isset ( $params ['where'] ) || ! $params ['where']  || $this->_where ( $params ['where'] );
 		
 		// if provided an order clause cal _order private function
-		! isset ( $params ['order'] ) || $this->_order ( $params ['order'] );
+		! isset ( $params ['order'] ) || ! $params ['order'] || $this->_order ( $params ['order'] );
 		
 		// if provided a limit clause call _limit private function
-		! isset ( $params ['limit'] ) || $this->_limit ( $params ['limit'] );
+		! isset ( $params ['limit'] ) || ! $params ['limit'] || $this->_limit ( $params ['limit'] );
 	}
 	
 	
@@ -394,6 +402,69 @@ class Database {
 		$this->_query .= " LIMIT " . ( int ) $numRows;
 	}
 	
+	
+	/**
+	 * List fields from a table
+	 * 
+	 * @param string $table
+	 * @return boolean
+	 */
+	private function _list_fields($table = '')
+	{
+		// Is there a cached result?
+		if (isset($this->data_cache['field_names'][$table]))
+		{
+			return $this->data_cache['field_names'][$table];
+		}
+	
+		if ($table == '')
+		{
+			return FALSE;
+		}
+	
+		$sql = 'SHOW COLUMNS FROM ' . $table ;
+					
+		$results = $this->query($sql);
+
+		foreach ($results as $row)
+		{
+			if (isset($row['FIELD']))
+			{
+				$retval[] = $row['FIELD'];
+			}
+			else
+			{
+				$retval[] = current($row);
+			}
+		}
+	
+		$this->data_cache['field_names'][$table] = $retval;
+		return $this->data_cache['field_names'][$table]; 
+	}
+	
+	/**
+	 * Keep only $data element matching fields in the $table
+	 * Optional: strip the id if provided
+	 * 
+	 * @param string $table
+	 * @param array $data
+	 * @param string $id
+	 * @return array:
+	 */
+	
+	private function _sanitizeData($table, $data, $id = null) {		
+		// remove the id from the data
+		! $id || $updateData =  array_diff_key($updateData, $recordId);
+		
+		// keep only the fields that actuallty exist in the database
+		return array_intersect_key($data, array_flip($this->_list_fields($table)));
+	}
+	
+	
+	
+	/**
+	 * Reset the connection
+	 */
 	public function __destruct() {
 		$this->_connection = null;
 	}

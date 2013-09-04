@@ -16,6 +16,7 @@ abstract class Controller {
 	// default action is index
 	protected $_action = 'index';
 	protected $_recordId = null;
+	protected $_model;
 	private $_isRoot = false;
 	
 	/**
@@ -45,7 +46,7 @@ abstract class Controller {
 					
 					// if a third parameter is provided then it is an action
 					if (isset($route[2])) {
-						$this->_action = $route[1];
+						$this->_action = $route[2];
 					} else {
 						// if no action is specified, it defaulted to show
 						$this->_action = 'show';
@@ -71,9 +72,11 @@ abstract class Controller {
 	
 	protected function view($view, $data = array())
 	{
-		$filename = 'views/_layout.php';
+		$filename = BASE_PATH . 'views/_layout.php';
 		if (file_exists($filename)) {
 			extract($data); // make the data available as variables
+			$h = Registry::singleton()->getObject('helpers');  // load view helpers
+			
 			include $filename;
 		} else {
 			exit('Can not find layout file');
@@ -89,9 +92,11 @@ abstract class Controller {
 	 */
 	protected function render($subview, $data = array())
 	{
-		$filename = 'views/' . $subview . '.php';
+		$filename = BASE_PATH . 'views/' . $subview . '.php';
 		if (file_exists($filename)) {
 			extract($data); // make the data available as variables
+			$h = Registry::singleton()->getObject('helpers'); // load view helpers
+			
 			include $filename;
 		} else {
 			exit('Can not find requested view');
