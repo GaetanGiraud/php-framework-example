@@ -1,40 +1,87 @@
 <?php
-use Core\Registry;
-
 /**
+ * GG Framework
+ * 
+ * @name config file
+ * @author Gaëtan Giraud
+ *
+ */
+
+/*===================================================================================
+ * 
  * Config array to gather all config items
  *  
  */
 
 $config = array();
-/**
+
+
+
+
+/*===================================================================================
  * 
- * DB Config
- * 
- */
-
-$config['dbConfig'] = array(
-		'host' => 'localhost',
-		'database' => 'db',
-		'user' => 'root',
-		'password' => 'tutsplus');
-
-
-
-
-
-/**
- * Root controller
+ * Environment specific DB Config
  * 
  */
-				
-$config['root'] = 'welcome';
 
-/**
- * Sore the config items inside the registry
+
+switch (ENVIRONMENT) {
+	case 'development':
+		$config['dbConfig'] = array(
+				'host' => 'localhost',
+				'database' => 'db',
+				'user' => 'root',
+				'password' => 'tutsplus');
+		break;
+	case 'testing':
+		$config['dbConfig'] = array(
+				'host' => '',
+				'database' => '',
+				'user' => '',
+				'password' => '');
+		break;
+	case 'production':
+		$config['dbConfig'] = array(
+				'host' => '',
+				'database' => '',
+				'user' => '',
+				'password' => '');
+		break;
+	default:
+		exit('The application environment is not set correctly.');
+		;
+}
+
+/*===================================================================================
+ * 
+ * Document Root Controller and Action default
  *
  */
 
-Registry::storeSettings($config);
+$config ['root'] = array (
+		'controller' => 'welcome',
+		'action' => 'index' 
+);
+
+
+/*===================================================================================
+ * 
+ * Application root path - by default set to document root
+ * 
+ */
+				
+$config ['appRoot'] = array (
+		'path' => '/' 
+);
+
+
+
+
+/*===================================================================================
+ * Store the config items inside the registry
+ *
+ */
+
+Core\Registry::storeSettings($config);
 
 

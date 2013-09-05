@@ -24,8 +24,7 @@ class Posts extends \Core\Controller {
 	public function edit() {
 		if (!$this->_recordId) {
 			//TODO Flash mechanisme
-			header('location: /posts');
-			exit();
+			redirect('/posts');
 		} else {
 			$post = \Models\Posts::find($this->_recordId);
 		}
@@ -54,7 +53,7 @@ class Posts extends \Core\Controller {
 		
 		//TODO redirect function
 		if($id) {
-			header('location: /posts/' . $id );
+			redirect('/posts/' . $id, 'Successfully created post'. 'success');
 		} else {
 			$this->view('posts/add', array('post' => $post ));
 		} 
@@ -87,7 +86,7 @@ class Posts extends \Core\Controller {
 		
 		// save in the database
 		if ($post->save()) {
-			header('location: /posts/' . $this->id);
+			redirect('/posts/' . $post->id, 'Successfully created post'. 'success');
 		} else {
 			$this->view('posts/edit', array('post' => $post));
 		}

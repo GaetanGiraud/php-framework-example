@@ -15,7 +15,7 @@
 </ul>
 
 <h2>Example: Ultra simple Blog</h2>
-<?= $h->link('/posts', "Mini blog"); ?>
+<?= link_to('/posts', "Mini blog"); ?>
 
 
 

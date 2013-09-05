@@ -2,11 +2,6 @@
 
 namespace Core;
 
-if ( ! defined( 'GGFW' ) )
-{
-	echo 'This file can only be called via the main index.php file, and not directly';
-	exit();
-}
 /**
  * Defines common features for all controllers
  * @author GM Giraud
@@ -17,7 +12,6 @@ abstract class Controller {
 	protected $_action = 'index';
 	protected $_recordId = null;
 	protected $_model;
-	private $_isRoot = false;
 	private $_layoutLoaded = false;
 	
 	/**
@@ -28,9 +22,9 @@ abstract class Controller {
 	public function __construct() 
 	{
 		// recover the route from the router in the registry
-		$route = Registry::load('router')->getRoute();
+	//	$route = Registry::load('router')->getRoute();
 		
-		// if $route is empty, do nothing, use the defaults
+		/* // $route empty indicates the document root
 		if (!empty($route[0])) { 
 
 			if (isset($route[1])) {
@@ -54,13 +48,14 @@ abstract class Controller {
 					
 				}
 				
-			}
+			} */
 						
-		} else {
-			$this->_isRoot = TRUE;
-		} 
+	/* 	} else {
+			// 
+		}  */
 		
 		// call the action - index is called is no action was provided
+	
 		$this->_callAction();
 	}
 	
@@ -88,7 +83,6 @@ abstract class Controller {
 		
 		if (file_exists($filename)) {
 			extract($data); // make the data available as variables
-			$h = Registry::load('helpers');  // load view helpers
 			
 			include $filename;
 		} else {
@@ -103,20 +97,19 @@ abstract class Controller {
 	 */
 	private function _callAction() 
 	{
-		if(method_exists($this, $this->_action)) {
-			call_user_func(array($this, $this->_action));
-		} else {
-			// prevent infinite looping, throw an error if $this referes to the root controller
-			if (!$this->_isRoot) {
-				
-				// redirect to root when action is not found
-				header( 'Location: /' , true, 301) ;
-				exit();
-			} else {
-	
-			 trigger_error('Infinite loop on the root page prevented. Please define an index action for the root.', E_USER_ERROR);
-			}
+		$route = Registry::load('router')->getRoute();
+		$action =  $route['action'];
 			
+		if(method_exists($this, $action)) {
+			
+			// if recordID if provided, save it for further use inside the controller
+			! $route['recordId'] || $this->_recordId = $route['recordId'];
+			
+			// call the action
+			call_user_func(array($this, $action));
+			
+		} else {
+			redirectToRoot();
 		}
 	}
 }

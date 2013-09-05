@@ -3,7 +3,20 @@ namespace Core;
 
 abstract class Model extends Validation {
 	
+	/**
+	 * The model primary key - set by default to id.
+	 * Overwrite in implementing class for custom primary key
+	 * 
+	 * @var string
+	 */
 	protected $_primaryKey = 'id';
+	
+	/**
+	 * The model corresponding table name - set by default to the implementing class name.
+	 * Overwrite in implementing class for custom table name
+	 *
+	 * @var string
+	 */
 	protected $_table;
 	
 	/**

@@ -4,11 +4,6 @@ namespace Core;
  * Database management and access class
  * This is a very basic level of abstraction
  */
-if ( ! defined( 'GGFW' ) )
-{
-	echo 'This file can only be called via the main index.php file, and not directly';
-	exit();
-}
 
 class Database {
 	

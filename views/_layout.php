@@ -3,8 +3,13 @@
 
 <!-- Content comes here -->
 <div class="container">
+
+	<div class = 'row'>
+		<?php  $this->view('components/flash'); ?>
+	</div>
+	
 	<div class="row">
-		<?php  $this->view($view, $data); ?>
+		<?php $this->view($view, $data); ?>
 	</div>
 </div>
 <!-- End Content -->

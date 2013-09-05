@@ -2,20 +2,19 @@
 namespace Core;
 
 abstract class Validation {
-
+	/**
+	 * Records validation rules.
+	 *
+	 * @var array
+	 */
+	protected $_rules = array();
+	
 	/**
 	 * Records validation errors.
 	 * 
 	 * @var array empty by default
 	 */
 	protected $_validationErrors = array();
-	
-	/**
-	 * Records validation rules.
-	 * 
-	 * @var array
-	*/
-	protected $_validationRules = array();
 	
 
 	/**

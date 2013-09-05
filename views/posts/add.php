@@ -1,6 +1,6 @@
 <h1>Create a new post here</h1>
 
-<?= $h->validationErrors($post); ?>
+<?php validationErrors($post); ?>
 
 <form action="/posts/create" method="post">	
 	<div class="form-group">

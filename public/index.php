@@ -9,45 +9,156 @@ use Core\Registry;
  * 
  */
 
-// first and foremost, start our sessions
+
+/*===================================================================================
+ * 
+ * Start the session
+ * 
+ */ 
+
 session_start();
 
-/**
+
+
+/*===================================================================================
+ * 
  * Set up some definitions
+ * 
  */
 
-
-// The public root path, where files accessible from the outside are located
+/*
+ * The public root path, usually set to the Apache DocumentRoot
+ */ 
 
 define("APP_PATH", dirname( __FILE__) . '/');
 
 
+/*
+ * Base path where the application resides.
+ * Usually for security purposes outside of the public folder.
+ * 
+ */ 
 
-// Base path where the application resides.
-// Usually for security purposes outside of the public folder
+$systemPath = '../';
 
-$base_path = realpath('../') . '/';
+
+$basePath = realpath($systemPath) . '/';
 
 // Is the base path correct?
-if ( ! is_dir($base_path))
+if ( ! is_dir($basePath))
 {
 	exit("Your base folder path does not appear to be set correctly.");
 }
 
-define("BASE_PATH", $base_path);
+define("BASE_PATH", $basePath);
 
-// the fully qualified domaine of the server
+
+/*
+ * The fully qualified domaine of the server
+ */ 
+
 define("FQDN", 'http://'. $_SERVER['SERVER_NAME']);
 
-// We will use this to ensure scripts are not called from outside of the framework
-define("GGFW", TRUE);
+
+/* The Environement can be set to anything, but default usage is:
+	*
+	*     development
+	*     testing
+	*     production
+	*
+	* NOTE: If you change these, also change the error levels && the config file
+	*
+*/
+
+define('ENVIRONMENT', 'development');
 
 
-/**
+
+
+/*===================================================================================
+ * 
  * Set error levels
  *
  */
 
+
+if (defined('ENVIRONMENT'))
+{
+	switch (ENVIRONMENT)
+	{
+		case 'development':
+			error_reporting(E_ALL | E_STRICT);
+			break;
+
+		case 'testing':
+		case 'production':
+			error_reporting(0);
+			break;
+
+		default:
+			exit('ENVIRONMENT must be defined as either development/testing/production.');
+	} 
+} else {
+		exit('ENVIRONMENT must be set up.');
+}
+
+
+
+
+/*===================================================================================
+ *
+ * Overriding the default error handling to make better use of Exceptions
+ * in an object oriented framework
+ *
+ */
+
+function exception_error_handler($errNo, $errStr, $errFile, $errLine ) {
+	throw new Core\ErrorHandler($errStr, 0, $errNo, $errFile, $errLine);
+}
+
+set_error_handler("exception_error_handler", E_ALL);
+
+
+
+
+/*===================================================================================
+ * 
+ * Load the utilities - Required, do not modify!
+ * 
+ */
+
+$dir = BASE_PATH . 'core/utilities/';
+
+// scan the folder and remove the .. and . entries
+$files = array_diff(scandir($dir), array('..', '.'));
+
+foreach ($files as $file) {
+	require_once $dir . $file;
+}
+
+/*===================================================================================
+ *
+* Load the view helpers folder.
+* 
+* Comment out to disable view helpers
+*
+*/
+
+$dir = BASE_PATH . 'helpers/';
+
+// scan the folder and remove the .. and . entries
+$files = array_diff(scandir($dir), array('..', '.'));
+
+foreach ($files as $file) {
+	require_once $dir . $file;
+}
+
+
+/*===================================================================================
+ * 
+ * __autoload: Needs to be defined before any class is created.
+ * 
+ */
 
 /**
  * Magic autoload function
@@ -56,25 +167,24 @@ define("GGFW", TRUE);
  * @param String the name of the class
  */
 
-function __autoload($class_name)
+function __autoload($className)
 {
 	/** 
-	 * Namespace need to correspond with folder names for the autoload to
-	 * work appropriatively
+	 * Namespace need to correspond with folder names for autoload to function.
 	 */
-	$file = BASE_PATH . strtolower(str_replace('\\', '/', $class_name)) . '.php';	
+	$file = BASE_PATH . strtolower(str_replace('\\', '/', $className)) . '.php';	
 	
 	if (file_exists($file)){ 
 		require_once $file;
 	} else {
-		return false;
-		//trigger_error('Could not locate class file ' . $class_name, E_USER_ERROR);
+		// Throw an exception.
+		 trigger_error('Class '. $className .' not found.', E_USER_ERROR);
 	}
 }
 
-/**
- * Load config file
+/*===================================================================================
  * 
+ * Load config file
  * 
  */
 
@@ -86,20 +196,20 @@ if (file_exists($file)){
 	trigger_error('Could not locate config file. Make sure the config file is in the BASE Directory ', E_USER_ERROR);
 }
 
-//print_r( Registry::getSetting('dbConfig') );
 
-// require our registry
-// require_once BASE_PATH . 'core/registry.php';
+/*===================================================================================
+ *
+ * Refresh the FLASH
+ *
+ */
 
-// $registry = Core\Registry::singleton();
+Core\Flash::refresh();
 
-//TODO load config file into the registry
-
-
-// Connect to the database
-
-//exit();
-// Route the request
+/*===================================================================================
+ * 
+ * Route the request 
+ * 
+ */
 
 Registry::load('router')->route($_SERVER["REQUEST_URI"]);
 
