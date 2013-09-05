@@ -27,7 +27,7 @@ abstract class Model extends Validation {
 	 * @param string $limit
 	 */
 	public static function get($order = null, $limit = null) {
-		$db = Registry::singleton()->getObject('db');
+		$db = Registry::load('database');
 		$class = get_called_class();
 		
 		// create empty object to recover the table name
@@ -57,7 +57,7 @@ abstract class Model extends Validation {
 	 */
 	
 	public static function find($id) {
-		$db = Registry::singleton()->getObject('db');
+		$db = Registry::load('database');
 		$class = get_called_class();
 		
 		// create an empty object
@@ -104,7 +104,7 @@ abstract class Model extends Validation {
 	 * @return boolean Succes or failure of the operation
 	 */
 	public function save() {
-		$db = Registry::singleton()->getObject('db');
+		$db = Registry::load('database');
 
 		$table = $this->_getTableName();
 		$pkey = $this->_primaryKey;
@@ -139,7 +139,7 @@ abstract class Model extends Validation {
 	 * @return 
 	 */
 	public function delete() {
-		$db = Registry::singleton()->getObject('db');
+		$db = Registry::load('database');
 
 		$table = $this->_getTableName();
 		

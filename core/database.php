@@ -56,35 +56,6 @@ class Database {
 	}
 	
 	/**
-	 * Create a new database connection using PDO
-	 * 
-	 * @param string $host        	
-	 * @param string $dbname        	
-	 * @param string $username        	
-	 * @param string $passwd        	
-	 * @param string $options        	
-	 */
-	public function newConnection($host, $dbname, $username, $passwd, $options = NULL) {
-		//TODO get db info from configuration
-		// setting default options if not provided
-		$options || $options = array (
-				\PDO::MYSQL_ATTR_FOUND_ROWS => TRUE 
-		);
-		
-		try {
-			// connect to the database
-			$this->_connection = new \PDO ( 'mysql:host=' . $host . ';dbname=' . $dbname, $username, $passwd, $options );
-			
-			// set the error codes
-			$this->_connection->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-		} catch ( PDOException $e ) {
-			trigger_error ( 'Error connecting to host: ' . $e->getMessage (), E_USER_ERROR );
-		}
-	}
-	
-	
-	
-	/**
 	 * All purpose query functionality. To be used when no other option is available
 	 * @param String $query the sql query to be performed
 	 * @return array of data fetched from database
@@ -141,8 +112,11 @@ class Database {
 				$this->_query = "SELECT " . implode ( ',', $params ['fields'] ) . " FROM $table ";
 			}
 			
-			// process parameters
-			$this->_processParams ( $params );
+			// process parameters - order of processing need to follow 
+			// the order of the clauses in a SQL query
+			$this->_processParams ( $params, 'where' );
+			$this->_processParams ( $params, 'order' );
+			$this->_processParams ( $params, 'limit' );
 		}
 		
 		$this->_prepareQuery ();
@@ -171,7 +145,7 @@ class Database {
 	 */
 	public function insert($table, $insertData) 
 	{	
-		// Sanitize the data and 
+		// Sanitize the data
 		$insertData = $this->_sanitizeData($table, $insertData);
 		
 		// store the data in the stmtData variable for further use
@@ -181,6 +155,7 @@ class Database {
 		$this->_query = "INSERT INTO $table ";
 		
 		{// prepare the VALUES part of the query
+			
 			$keys = array_keys ( $insertData );
 			
 			// add the field titles from the data array keys
@@ -267,7 +242,7 @@ class Database {
 	{
 		$this->_query = "DELETE FROM $table ";
 		
-		{ // create where clause with $recordId
+		{ 		// create where clause with $recordId
 			$primaryKey = array_keys($recordId)[0]; // recover the primary key
 				
 			$this->_where ( array (
@@ -280,15 +255,54 @@ class Database {
 		return $this->_executeQuery ();
 	}
 	
+	/**
+	 * Create a new database connection using PDO
+	 *
+	 * @param string $host
+	 * @param string $dbname
+	 * @param string $username
+	 * @param string $passwd
+	 * @param string $options
+	 */
+	private function _newConnection($host, $dbname, $username, $passwd, $options = NULL) {
+		//TODO get db info from configuration
+		// setting default options if not provided
+		$options || $options = array (
+		\PDO::MYSQL_ATTR_FOUND_ROWS => TRUE
+		);
 	
+		try {
+			// connect to the database
+			$this->_connection = new \PDO ( 'mysql:host=' . $host . ';dbname=' . $dbname, $username, $passwd, $options );
+				
+			// set the error codes
+			$this->_connection->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+		} catch ( PDOException $e ) {
+			trigger_error ( 'Error connecting to host: ' . $e->getMessage (), E_USER_ERROR );
+		}
+	}
 	
 	/**
-	 * Prepare the query and perform some error management
+	 * Connect to the database.
+	 * Prepare the query and perform some error management.
 	 * 
 	 * @return void
 	 */
 	private function _prepareQuery() 
 	{
+			// Establish connection to the database if not already connected
+		if (! $this->_connection || empty($this->_connection)) {
+			
+			  // retrieve the database configuration from the registry
+			$config = Registry::getSetting('dbConfig');
+			
+			$this->_newConnection(
+					$config['host'], 
+					$config['database'], 
+					$config['user'], 
+					$config['password']);
+		}
+		
 		if (! $stmt = $this->_connection->prepare ( $this->_query )) {
 			trigger_error ( 'Problem preparing query', E_USER_ERROR );
 		}
@@ -297,7 +311,7 @@ class Database {
 	
 	
 	/**
-	 * execute query and return sucess/failure of execution
+	 * Executes query and return sucess/failure of execution
 	 * 
 	 * @return boolean PDOStatement::errorInfo
 	 */
@@ -320,16 +334,17 @@ class Database {
 	 *        	see select, insert, update, delete functions for format definition
 	 * @return void
 	 */
-	private function _processParams($params) 
+	private function _processParams($params, $clause) 
 	{
-		// if provided a where clause call _where private function
-		! isset ( $params ['where'] ) || ! $params ['where']  || $this->_where ( $params ['where'] );
+		$method = '_' . strtolower($clause);
 		
-		// if provided an order clause cal _order private function
+		! isset ( $params[$clause] ) || ! $params [$clause]  || call_user_func(array($this, $method), $params [$clause] );
+		
+/* 		// if provided an order clause cal _order private function
 		! isset ( $params ['order'] ) || ! $params ['order'] || $this->_order ( $params ['order'] );
 		
 		// if provided a limit clause call _limit private function
-		! isset ( $params ['limit'] ) || ! $params ['limit'] || $this->_limit ( $params ['limit'] );
+		! isset ( $params ['limit'] ) || ! $params ['limit'] || $this->_limit ( $params ['limit'] ); */
 	}
 	
 	

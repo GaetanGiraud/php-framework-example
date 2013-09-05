@@ -18,6 +18,7 @@ abstract class Controller {
 	protected $_recordId = null;
 	protected $_model;
 	private $_isRoot = false;
+	private $_layoutLoaded = false;
 	
 	/**
 	 * Controller identifies and call the requested action
@@ -27,8 +28,7 @@ abstract class Controller {
 	public function __construct() 
 	{
 		// recover the route from the router in the registry
-		$registry = Registry::singleton();
-		$route = $registry->getObject('router')->getRoute();
+		$route = Registry::load('router')->getRoute();
 		
 		// if $route is empty, do nothing, use the defaults
 		if (!empty($route[0])) { 
@@ -66,40 +66,33 @@ abstract class Controller {
 	
 	/**
 	 * Load the layout view from the controllers
+	 * 
 	 * @param string $view name of the view to be loaded
 	 * @param array $data array of data to be used inside the view
 	 */
 	
 	protected function view($view, $data = array())
 	{
-		$filename = BASE_PATH . 'views/_layout.php';
+		// check if the layout has been rendered
+		if (! $this->_layoutLoaded) {
+			// if not, render the layout and pass the requested 
+			// view inside the $data['view'] variable
+			
+			$filename = BASE_PATH . 'views/_layout.php';
+			$data['view'] = $view;
+			$this->_layoutLoaded = true;
+			
+		} else {
+			$filename = BASE_PATH . 'views/' . $view . '.php';
+		}
+		
 		if (file_exists($filename)) {
 			extract($data); // make the data available as variables
-			$h = Registry::singleton()->getObject('helpers');  // load view helpers
+			$h = Registry::load('helpers');  // load view helpers
 			
 			include $filename;
 		} else {
 			exit('Can not find layout file');
-		}
-	
-	}
-	
-	
-	/**
-	 * Render subviews and compopents
-	 * @param string $subview
-	 * @param array $data optional data to be used inside the subview
-	 */
-	protected function render($subview, $data = array())
-	{
-		$filename = BASE_PATH . 'views/' . $subview . '.php';
-		if (file_exists($filename)) {
-			extract($data); // make the data available as variables
-			$h = Registry::singleton()->getObject('helpers'); // load view helpers
-			
-			include $filename;
-		} else {
-			exit('Can not find requested view');
 		}
 	
 	}

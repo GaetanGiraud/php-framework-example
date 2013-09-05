@@ -1,4 +1,5 @@
 <?php
+use Core\Registry;
 /**
  * GG Framework
  * Framework loader - acts as a single point of access to the Framework 
@@ -11,37 +12,53 @@
 // first and foremost, start our sessions
 session_start();
 
-// Set up some definitions
-// The applications root path, so we can easily get this path from files located in other folders
+/**
+ * Set up some definitions
+ */
+
+
+// The public root path, where files accessible from the outside are located
+
 define("APP_PATH", dirname( __FILE__) . '/');
 
 
-$system_path = realpath('../') . '/';
 
-// Is the system path correct?
-if ( ! is_dir($system_path))
+// Base path where the application resides.
+// Usually for security purposes outside of the public folder
+
+$base_path = realpath('../') . '/';
+
+// Is the base path correct?
+if ( ! is_dir($base_path))
 {
-	exit("Your system folder path does not appear to be set correctly.");
+	exit("Your base folder path does not appear to be set correctly.");
 }
 
-define("BASE_PATH", $system_path);
+define("BASE_PATH", $base_path);
 
-// the fully qualified hostname of the server
+// the fully qualified domaine of the server
 define("FQDN", 'http://'. $_SERVER['SERVER_NAME']);
-
 
 // We will use this to ensure scripts are not called from outside of the framework
 define("GGFW", TRUE);
 
+
+/**
+ * Set error levels
+ *
+ */
+
+
 /**
  * Magic autoload function
- * used to include the appropriate -controller- files when they are needed
+ * used to include class files as they are needed
+ * 
  * @param String the name of the class
  */
 
 function __autoload($class_name)
 {
-	/** using namespacing require the missing class file
+	/** 
 	 * Namespace need to correspond with folder names for the autoload to
 	 * work appropriatively
 	 */
@@ -55,20 +72,34 @@ function __autoload($class_name)
 	}
 }
 
-// require our registry
-require_once BASE_PATH . 'core/registry.php';
+/**
+ * Load config file
+ * 
+ * 
+ */
 
-$registry = Core\Registry::singleton();
+$file = BASE_PATH . 'config.php';
+
+if (file_exists($file)){
+	require_once $file;
+} else {
+	trigger_error('Could not locate config file. Make sure the config file is in the BASE Directory ', E_USER_ERROR);
+}
+
+//print_r( Registry::getSetting('dbConfig') );
+
+// require our registry
+// require_once BASE_PATH . 'core/registry.php';
+
+// $registry = Core\Registry::singleton();
 
 //TODO load config file into the registry
 
 
 // Connect to the database
 
-//TODO database details inside config file
-$registry->getObject('db')->newConnection('localhost',  'db', 'root', 'tutsplus');
-
+//exit();
 // Route the request
 
-$registry->getObject('router')->route($_SERVER["REQUEST_URI"]);
+Registry::load('router')->route($_SERVER["REQUEST_URI"]);
 

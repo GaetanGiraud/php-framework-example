@@ -1,12 +1,12 @@
-<?php $this->render('components/page_head');?>
+<?php $this->view('components/page_head');?>
 
 
 <!-- Content comes here -->
 <div class="container">
 	<div class="row">
-		<?php  $this->render($view, $data); ?>
+		<?php  $this->view($view, $data); ?>
 	</div>
 </div>
 <!-- End Content -->
 
-<?php $this->render('components/page_tail'); ?>
+<?php $this->view('components/page_tail'); ?>

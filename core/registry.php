@@ -13,25 +13,31 @@ class Registry {
 	 * Our array of objects
 	 * @access private
 	 */
-	private static $objects = array();
+	private $_objects = array();
+	
+	/**
+	 * Record of loaded object
+	 * @access private
+	 */
+	private $_isLoaded = array();
 	
 	/**
 	 * Our array of settings
 	 * @access private
 	 */
-	private static $settings = array();
+	private $_settings = array();
 	
 	/**
 	 * The framework humane readable name
 	 * @access private
 	 */
-	private static $frameworkName = 'GG Framework v01';
+	private static $_frameworkName = 'GG Framework v01';
 	
 	/**
 	 * The instance of the registry
 	 * @access private
 	 */
-	private static $instance;
+	private static $_instance;
 	
 	/**
 	 * Private constructor to prevent it being created directly 
@@ -39,9 +45,9 @@ class Registry {
 	 */
 	private function __construct()
 	{
-		$this->storeObject('Core\Database', 'db' );
-		$this->storeObject('Core\Router', 'router' );
-		$this->storeObject('Core\Helpers', 'helpers' );
+	//	$this->storeObject('Core\Database', 'db' );
+	////	$this->storeObject('Core\Router', 'router' );
+	//	$this->storeObject('Core\Helpers', 'helpers' );
 	}
 	
 	/**
@@ -51,13 +57,13 @@ class Registry {
 	 * @return
 	 *
 	 */
-	public static function singleton() 
+	private static function singleton() 
 	{
-		if (! isset ( self::$instance )) {
-			self::$instance = new self();
+		if (! isset ( self::$_instance )) {
+			self::$_instance = new self();
 		}
 		
-		return self::$instance;
+		return self::$_instance;
 	}
 	
 	/**
@@ -68,41 +74,75 @@ class Registry {
 		trigger_error('Cloning the registry is not permitted', E_USER_ERROR);
 	}
 	
+	
+	/**
+	 * Load a class - Instantiate it if not already loaded
+	 * 
+	 * 
+	 * @param string $class - Only Core classes can be loaded into the register
+	 * @param string $params - optional parameters
+	 * @return multitype:
+	 */
+	public static function load($class) 
+	{	
+		// get the registry singleton.
+		$registry = Registry::singleton();
+		
+		
+		if (!in_array($class, $registry->_isLoaded)) {
+			
+			$className = 'Core\\' . $class;
+			
+			$registry->_objects[ $class ] = new $className();
+			$registry->_isLoaded[] = $class;
+			
+			return $registry->_objects[ $class ];
+			
+		} else {
+			return $registry->_objects[ $class ];
+		}
+		
+		
+	}
 	/**
 	 * Stores an object in the registry 
 	 * @param String $object the name of the object
 	 * @param String $key the key for the array 
 	 * @return void
 	 */
-	public function storeObject($object, $key)
+	/* public function storeObject($object, $key)
 	{	 
-		self::$objects[ $key ] = new $object( self::$instance );
-	}
+		self::$_objects[ $key ] = new $object( self::$_instance );
+	} */
 	
 	/**
 	 * Gets an object from the registry 
 	 * @param String $key the array key 
 	 * @return object:
 	 */
-	public function getObject($key)
+/* 	public function getObject($key)
 	{
 		//TODO create a simpler load mechanism to perform both actions
 		
-		if (is_object ( self::$objects [$key] )) {
-			return self::$objects[$key];
+		if (is_object ( self::$_objects [$key] )) {
+			return self::$_objects[$key];
 		}
-	}
+	} */
 	
 	/**
-	 * Stores settings in the registry 
+	 * Stores the configuration settings in the registry 
+	 * 
 	 * @param String $data
 	 * @param String $key the key for the array 
 	 * @return void
 	 */
-	public function storeSetting($data, $key)
+	public static function storeSettings($settings)
 	{
-		//TODO load config file inside settings
-		self::$settings [ $key ] = $data;
+		$registry = Registry::singleton();
+		
+		foreach ($settings as $key => $value) {
+			$registry->_settings [ $key ] = $value;
+		}
 	}
 	
 	/**
@@ -112,10 +152,13 @@ class Registry {
 	 *        	the key in the array
 	 * @return Stored setting or void
 	 */
-	public function getSetting($key) 
+	public static function getSetting($key) 
 	{
-		if (isset ( self::$settings [$key] )) {
-			return self::$settings [$key];
+		// get the registry singleton.
+		$registry = Registry::singleton();
+		
+		if (isset ( $registry->_settings [$key] )) {
+			return $registry->_settings [$key];
 		}
 	}
 	
@@ -125,6 +168,6 @@ class Registry {
 	 */
 	public function getFrameworkName()
 	{
-		return self::$frameworkName;
+		return self::$_frameworkName;
 	}
 }
