@@ -114,7 +114,7 @@ class Router {
 		$uri = normalizePath($_SERVER["REQUEST_URI"]);
 		
 		if ( $uri != $rootPath) {
-			redirect('/' . $rootPath, 'The page you are requesting does not exitst', 'error');
+			redirect('/' . $rootPath, 'The page you are requesting does not exits!', 'danger');
 		} else {
 			trigger_error('Root controller is not defined.', E_USER_ERROR);
 		}

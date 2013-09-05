@@ -1,7 +1,6 @@
 <?php
 namespace Controllers;
 
-//use Models;
 class Posts extends \Core\Controller {
 	
 	/**
@@ -51,9 +50,8 @@ class Posts extends \Core\Controller {
 		
 		$id = $post->save();
 		
-		//TODO redirect function
 		if($id) {
-			redirect('/posts/' . $id, 'Successfully created post'. 'success');
+			redirect('/posts/' . $id, 'Successfully created post', 'success');
 		} else {
 			$this->view('posts/add', array('post' => $post ));
 		} 
@@ -86,7 +84,7 @@ class Posts extends \Core\Controller {
 		
 		// save in the database
 		if ($post->save()) {
-			redirect('/posts/' . $post->id, 'Successfully created post'. 'success');
+			redirect('/posts/' . $post->id, 'Successfully created post', 'success');
 		} else {
 			$this->view('posts/edit', array('post' => $post));
 		}
@@ -103,7 +101,7 @@ class Posts extends \Core\Controller {
 	
 		// delete the post
 		if($post->delete()) {
-			header('location: /posts');
+			redirect('/posts/', 'Successfully delete post', 'success');
 		}
 	
 	}
