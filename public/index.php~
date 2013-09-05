@@ -6,7 +6,6 @@ use Core\Registry;
  * 
  * @version 0.1 
  * @author Gaëtan Giraud
- * @licence Apache v2.0
  * 
  */
 
