@@ -1,20 +1,86 @@
 Light Weight PHP Framework
 ==========================
 
-Table of content 
+Table of content
 
 1. Goal
 -------
-1. Goal
--------
-1. Goal
--------
-1. Goal
--------
-1. Goal
+
+2. How to use
+-------------
+
+#### 2.1 Naming Conventions
+
+#### 2.2 Controllers
+
+##### 2.2.1 Create a controller
+
+##### 2.2.2 Create an action
+
+##### 2.2.3 Available methods
+
+#### 2.3 Models
+
+##### 2.3.1 Create a model
+
+##### 2.3.2 Operations
+
+##### 2.3.3 Validation
+
+##### 2.3.4 Options
+
+#### 2.4 Views
+
+##### 2.4.1 Caling a view
+
+##### 2.4.2 Passing Data
+
+##### 2.4.3 Layout file
+
+3. Other Concepts
+-----------------
+
+### 3.1 Lazy loading
+
+### 3.2 Object Oriented Programming
+
+#### 3.2.1 Inheritance
+
+#### 3.2.2 Abstract classes
+
+### 3.3 Design Patterns
+
+##### 3.3.1 Singleton
+
+##### 3.3.2 Registry
+
+##### 3.3.3 Front Controller
+
+##### 3.3.4 Factory
+
+### 3.4 Database
+
+#### 3.4.1 Abstraction
+
+#### 3.4.2 PDO Prepared statements
+
+4. Misc
 -------
 
+### 4.1 Configuration
 
+### 4.2 Flash
+
+### 4.2 View helpers
+
+#### 4.2.1 Load view helpers libraries
+
+#### 4.2.2 Helpers Definition
+
+#### 4.2.3 Custom Helpers
+
+5. TODO
+-----------
 
 ---------------------------------------
 
@@ -141,7 +207,7 @@ class Ressource extends \Core\Model {
 
 ##### 2.3.3 Validation
 
-##### Set up validation
+###### Set up validation
 
 Define validation rules in the `$_rules` array property of the model.
 
@@ -253,8 +319,8 @@ The original call gets passed through the `$view` variable, and data through `da
 
 Do not change the name of the `$view` and `$data` variables!
 
-3. Concepts
------------
+3. Other Concepts
+-----------------
 
 The MVC and ORM concepts are covered in chapter 2.
 
