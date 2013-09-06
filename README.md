@@ -3,19 +3,19 @@ Light Weight PHP Framework
 
 Table of content
 
-[1. Goal](#1-goal)
+**[1. Goal](#1-goal)**
 
-[2. How to use](#2-how-to-use)
+**[2. How to use](#2-how-to-use)**
 
 [2.1 Naming Conventions](#21-naming-conventions)
 
-[2.2 Controllers](22-controllers)
+[2.2 Controllers](#22-controllers)
 
 [2.3 Models](#23-models)
 
 [2.4 Views](#24-views)
 
-[3. Other Concepts](#3. Other Concepts)
+**[3. Other Concepts](#3-other-concepts)**
 
 [3.1 Lazy loading](#31-lazy-loading)
 
@@ -25,7 +25,7 @@ Table of content
 
 [3.4 Database]((#34-database)
 
-[4. Misc](#4-misc)
+**[4. Misc](#4-misc)**
 
 [4.1 Configuration](#41-configuration)
 
@@ -33,7 +33,7 @@ Table of content
 
 [4.3 View helpers](#43-view-helpers)
 
-[5. TODO](#5-TODO)
+**[5. TODO](#5-todo)**
 
 ---------------------------------------
 
