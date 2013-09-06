@@ -1,6 +1,21 @@
 Light Weight PHP Framework
 ==========================
 
+Table of content 
+
+1. Goal
+-------
+1. Goal
+-------
+1. Goal
+-------
+1. Goal
+-------
+1. Goal
+-------
+
+
+
 ---------------------------------------
 
 1. Goal
@@ -23,7 +38,7 @@ This framework implements a traditional MVC framework.
 
 All filenames are given related the `BASE_PATH` of the framework.
 
-#### 2.1 Formating Rules
+#### 2.1 Naming Conventions
 
 There are a small set of rules that need to be followed: 
 
@@ -367,7 +382,7 @@ The database interface has been abstracted into 5 methods as follow:
 	 
 	 @param Array $params 
 	 
-	         	Format: array(
+	  		Format: array(
 	         	'fields' => array('field1, 'field2'),
 	         	'where' => array(
 	         		'field1' => 'value1',
@@ -387,6 +402,7 @@ The database interface has been abstracted into 5 methods as follow:
 	 @param String $table to query
 	 
 	 @param Array $insertData
+	        	
 	        	Format: array(
 	         	'field1' => 'value1',
 	         	'field2' => 'value2'
@@ -399,7 +415,7 @@ The database interface has been abstracted into 5 methods as follow:
 	 @param String $table to query
 	 @param Array $recordId - Format array('primary key' => 'value')
 	 @param Array $updateData
-	         	-
+	         	
 	         	Format: array(
 	         	'field1' => 'value1',
 	         	'field2' => 'value2'
@@ -424,7 +440,17 @@ PDO is used as database library. Queries are performed exclusively using prepare
 4. Misc
 -------
 
-### 4.1 Config file
+### 4.1 Configuration
+
+The `ENVIRONMENT` is set up in the `public/index.php` file. It can be equal to `development`, 'testing` or `production`.
+
+Error reporting otpions are set up as well in the `public/index.php`;
+
+In the `config.php` you can set up the following:
+*	Database Config (Specific config for each environment)
+*	Root controller & action
+*	Application root path
+*	View helpers
 
 
 ### 4.2 Flash
@@ -487,6 +513,8 @@ You can create custom helpers very easily:
 -----------
 
 A few ideas to improve the framework:
+
+* 	Improve error reporting and Exception handling
 
 *	Introduce caching.
 
