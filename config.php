@@ -85,3 +85,14 @@ $config ['appRoot'] = array (
 Core\Registry::storeSettings($config);
 
 
+/*===================================================================================
+ *
+* Load the view helpers library.
+*
+* Comment out to disable view helpers.
+*
+* Add custom view helpers libraries in the helpers/ directory
+*
+*/
+
+helpers(array('core', 'custom'));

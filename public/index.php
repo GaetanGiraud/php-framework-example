@@ -163,21 +163,6 @@ foreach ($files as $file) {
 
 
 /*===================================================================================
- *
-* Load the view helpers folder.
-* 
-* Comment out to disable view helpers.
-* 
-* Add custom view helpers in the helpers/ directory
-*
-*/
-
-helpers(array('core', 'custom'));
-
-
-
-
-/*===================================================================================
  * 
  * __autoload: Needs to be defined before any class is created.
  * 
