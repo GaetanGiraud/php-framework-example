@@ -7,4 +7,16 @@
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="<?= base_url('css/blog.css'); ?>" rel="stylesheet" media="screen">
 </head>
-<body>
+
+<?php 
+	// load scrolispy if the controller is the welcome controller
+	if ($this->_controller == 'welcome'):?>
+
+	<body data-spy="scroll" data-target="#navbar">
+
+<?php else: ?>
+	<body>
+<?php endif; ?>
+
+
+

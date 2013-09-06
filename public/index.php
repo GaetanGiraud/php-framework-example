@@ -1,15 +1,27 @@
 <?php
-use Core\Registry;
 /**
  * GG Framework
- * Framework loader - acts as a single point of access to the Framework 
- * 
- * @version 0.1 
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 0.1
  * @author Gaëtan Giraud
  * @licence Apache v2.0
- * 
+ *
  */
 
+use Core\Registry;
+
+/*===================================================================================
+ *
+ * Check the PHP version. Use of namespacing entails PHP version > 5.3
+ *
+ */
+
+if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+	exit('This framework makes use of Namespaces, a feature available after PHP version 5.3. 
+			You are using: ' . PHP_VERSION );
+}
 
 /*===================================================================================
  * 
@@ -26,6 +38,16 @@ session_start();
  * Set up some definitions
  * 
  */
+
+/*
+ * Set up Framework information
+ * 
+ */
+
+define("VERSION", 0.1);
+
+define("FRAMEWORK", 'GG Framework');
+
 
 /*
  * The public root path, usually set to the Apache DocumentRoot
@@ -137,22 +159,22 @@ foreach ($files as $file) {
 	require_once $dir . $file;
 }
 
+
+
+
 /*===================================================================================
  *
 * Load the view helpers folder.
 * 
-* Comment out to disable view helpers
+* Comment out to disable view helpers.
+* 
+* Add custom view helpers in the helpers/ directory
 *
 */
 
-$dir = BASE_PATH . 'helpers/';
+helpers(array('core', 'custom'));
 
-// scan the folder and remove the .. and . entries
-$files = array_diff(scandir($dir), array('..', '.'));
 
-foreach ($files as $file) {
-	require_once $dir . $file;
-}
 
 
 /*===================================================================================

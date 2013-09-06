@@ -1,23 +1,45 @@
 <?php
+/**
+ * GG Framework
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 	0.1
+ * @author 		Gaëtan Giraud
+ * @copyright 	2013.
+ * @license		Apache v2.0
+ *
+ */
 
+/*===================================================================================*/
+
+// All models should reside under the Models namespace
 namespace Models;
 
+/**
+ * Skeleton Model class supporting the Posts CRUD application skeleton
+ * 
+ * @author gaetan
+ *
+ */
 class Posts extends \Core\Model {
 	/*
-	 * Uncomment for custom primary key
-	*/
+	 * Uncomment for custom primary key - default to id
+	 */
 	
 	// protected $_primaryKey = 'myPrimaryKey';
 	
 	/*
-	 * Uncomment for custom primary key
-	*/
+	 * Uncomment for custom tabke name - default to class name
+	 */
 	
 	// protected $_table = 'myTable';
 
 	
 	/**
 	 * Validation rules
+	 *
+	 * Rules are defined in a comma separated per field
 	 *
 	 * @var array
 	 */

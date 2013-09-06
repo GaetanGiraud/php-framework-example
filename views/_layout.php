@@ -2,16 +2,16 @@
 
 
 <!-- Content comes here -->
-<div class="container">
 
+<div class="container">
 	<div class = 'row'>
 		<?php  $this->view('components/flash'); ?>
 	</div>
-	
-	<div class="row">
-		<?php $this->view($view, $data); ?>
-	</div>
 </div>
+	
+<?php $this->view($view, $data); ?>
+
+
 <!-- End Content -->
 
 <?php $this->view('components/page_tail'); ?>

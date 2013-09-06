@@ -1,5 +1,18 @@
 @CHARSET "UTF-8";
 
-.container {
+body {
 	padding-top: 30px;
+	padding-bottom: 100px;
+}
+
+#welcome {
+	padding-top: 30px;
+}
+
+/*
+ * Cancel out the navbar padding in the welcome page
+ */
+#welcome section {
+	margin-top: -60px;
+	padding-top: 60px;
 }

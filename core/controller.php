@@ -1,15 +1,38 @@
 <?php
+/**
+ * GG Framework
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 	0.1
+ * @author 		Gaëtan Giraud
+ * @copyright 	2013.
+ * @license		Apache v2.0
+ *
+ */
+
+/*===================================================================================*/
 
 namespace Core;
 
 /**
- * Defines common behaviours of all controllers
+ * Defines common behaviours for all controllers
+ * 
+ * All controllers should inherit from Core\Controller
  * 
  * @author GM Giraud
  * @abstract
  *
  */
 abstract class Controller {
+	
+	/**
+	 * Action to be performed - default to index
+	 *
+	 * @var string
+	 * @access protected
+	 */
+	protected $_controller;
 	
 	/**
 	 * Action to be performed - default to index
@@ -47,7 +70,34 @@ abstract class Controller {
 	 */
 	public function __construct() 
 	{
+		$route = Registry::load('router')->getRoute();
+		
+		// record the controller name in a property to easily retrieve it
+		// inside views
+		$this->_controller =  $route['controller'];
+		
+		$this->_action =  $route['action'];
+
+		// if recordID if provided, save it for further use inside the controller
+		! $route['recordId'] || $this->_recordId = $route['recordId'];
+		
 		$this->_callAction();
+	}
+	
+	/**
+	 * Getter for the controller name
+	 * @return string
+	 */
+	public function getController() {
+		return $this->_controller;
+	}
+	
+	/**
+	 * Getter for the action name
+	 * @return string
+	 */
+	public function getAction() {
+		return $this->_action;
 	}
 	
 	/**
@@ -92,16 +142,10 @@ abstract class Controller {
 	 */
 	private function _callAction() 
 	{
-		$route = Registry::load('router')->getRoute();
-		$action =  $route['action'];
-			
-		if(method_exists($this, $action)) {
-			
-			// if recordID if provided, save it for further use inside the controller
-			! $route['recordId'] || $this->_recordId = $route['recordId'];
+		if(method_exists($this, $this->_action)) {
 			
 			// call the action
-			call_user_func(array($this, $action));
+			call_user_func(array($this, $this->_action));
 			
 		} else {
 			redirectToRoot();

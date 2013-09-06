@@ -1,8 +1,25 @@
 <?php
+
+/**
+ * GG Framework
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 	0.1
+ * @author 		Gaëtan Giraud
+ * @copyright 	2013.
+ * @license		Apache v2.0
+ *
+ */
+
+/*===================================================================================*/
+
 namespace Core;
 
 /**
  * Parse route and instantiante relevant controller
+ * 
+ * Implement the Front Controller design pattern
  * 
  * @author Gaëtan Giraud
  *
@@ -31,7 +48,7 @@ class Router {
 	 * @var string
 	 * @access private
 	 */
-	private $_recordId;
+	private $_recordId = null;
 	
 	public function __construct() {
 		

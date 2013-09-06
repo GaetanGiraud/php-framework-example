@@ -1,4 +1,19 @@
 <?php
+/**
+ * GG Framework
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 	0.1
+ * @author 		Gaëtan Giraud
+ * @copyright 	2013.
+ * @license		Apache v2.0
+ *
+ */
+
+/*===================================================================================*/
+
+// All models should reside under the Controllers namespace
 namespace Controllers;
 
 /**

@@ -1,10 +1,27 @@
 <?php
+/**
+ * GG Framework
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 	0.1
+ * @author 		Gaëtan Giraud
+ * @copyright 	2013.
+ * @license		Apache v2.0
+ *
+ */
+
+/*===================================================================================*/
+
 namespace Core;
 
 /**
- * Class handling the Flash
+ * Session Flash Messages class
  * 
  * Cannot be instantiated.
+ * 
+ * Only one message can recorded at a time.
+ * TODO Multiple flash messages
  * 
  * @static
  * @author Gaëtan Giraud
@@ -13,7 +30,7 @@ namespace Core;
 abstract class Flash {
 	
 	/**
-	 * Save a message in the flash
+	 * Save a message in the session flash
 	 * 
 	 * @param string $message
 	 * @param string $severity
@@ -28,7 +45,7 @@ abstract class Flash {
 	}
 	
 	/**
-	 * Retrieve the flash message if available
+	 * Retrieve the session flash message if available
 	 * 
 	 * @return array || bool
 	 */
@@ -47,7 +64,7 @@ abstract class Flash {
 	}
 	
 	/**
-	 * Refresh the flash
+	 * Refresh the session flash
 	 */
 	public static function refresh() 
 	{	

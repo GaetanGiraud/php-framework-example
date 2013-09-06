@@ -1,13 +1,28 @@
 <?php
+/**
+ * GG Framework
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 	0.1
+ * @author 		Gaëtan Giraud
+ * @copyright 	2013.
+ * @license		Apache v2.0
+ *
+ */
+
+/*===================================================================================*/
+
 namespace Core;
+
 /**
  * Database management and access class
  * 
  * This is a basic level of abstraction and
  * is compatible with MySQL only at this point.
  * 
- * Usage of PDO should allow to further develop 
- * compatibility rather easily.
+ * Usage of PDO allow to develop 
+ * compatibility further.
  * 
  * @author Gaëtan Giraud
  * 

@@ -1,8 +1,26 @@
 <?php
+/**
+ * GG Framework
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 	0.1
+ * @author 		Gaëtan Giraud
+ * @copyright 	2013.
+ * @license		Apache v2.0
+ *
+ */
+
+/*===================================================================================*/
+
 namespace Core;
 
 /**
- * Model Class - All Models should inherit from this class
+ * Defines common behaviours for all models
+ * 
+ * All Models should inherit from Core\Model
+ * 
+ * Implements the Factory design pattern
  * 
  * @author Gaëtan Giraud
  * @abstract
@@ -18,6 +36,7 @@ abstract class Model extends Validation {
 	 */
 	protected $_primaryKey = 'id';
 	
+	
 	/**
 	 * The model corresponding table name - set by default to the implementing class name.
 	 * Overwrite in implementing class for custom table name
@@ -25,6 +44,7 @@ abstract class Model extends Validation {
 	 * @var string
 	 */
 	protected $_table;
+	
 	
 	/**
 	 * Construct an on object and load the $data provided
@@ -79,6 +99,7 @@ abstract class Model extends Validation {
 		
 		return $objects;
 	}
+	
 	
 	/**
 	 * Find a record in the database and create a record object

@@ -1,9 +1,23 @@
 <?php
+/**
+ * GG Framework
+ *
+ * A lightweight example PHP framework
+ *
+ * @version 	0.1
+ * @author 		Gaëtan Giraud
+ * @copyright 	2013.
+ * @license		Apache v2.0
+ *
+ */
+
+/*===================================================================================*/
+
 namespace Core;
 
 /**
  * Custom error handler class.
- * For making php error children of Exception class
+ * Transform php error into children of Exception class
  * 
  * @author Gaëtan Giraud
  *
