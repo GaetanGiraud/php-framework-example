@@ -3,84 +3,37 @@ Light Weight PHP Framework
 
 Table of content
 
-1. Goal
--------
+[1. Goal](#1-goal)
 
-2. How to use
--------------
+[2. How to use](#2-how-to-use)
 
-#### 2.1 Naming Conventions
+[2.1 Naming Conventions](#21-naming-conventions)
 
-#### 2.2 Controllers
+[2.2 Controllers](22-controllers)
 
-##### 2.2.1 Create a controller
+[2.3 Models](#23-models)
 
-##### 2.2.2 Create an action
+[2.4 Views](#24-views)
 
-##### 2.2.3 Available methods
+[3. Other Concepts](#3. Other Concepts)
 
-#### 2.3 Models
+[3.1 Lazy loading](#31-lazy-loading)
 
-##### 2.3.1 Create a model
+[3.2 Object Oriented Programming](#32-object-oriented-programming)
 
-##### 2.3.2 Operations
+[3.3 Design Patterns](#33-design-patterns)
 
-##### 2.3.3 Validation
+[3.4 Database]((#34-database)
 
-##### 2.3.4 Options
+[4. Misc](#4-misc)
 
-#### 2.4 Views
+[4.1 Configuration](#41-configuration)
 
-##### 2.4.1 Caling a view
+[4.2 Flash](#42-flash)
 
-##### 2.4.2 Passing Data
+[4.3 View helpers](#43-view-helpers)
 
-##### 2.4.3 Layout file
-
-3. Other Concepts
------------------
-
-### 3.1 Lazy loading
-
-### 3.2 Object Oriented Programming
-
-#### 3.2.1 Inheritance
-
-#### 3.2.2 Abstract classes
-
-### 3.3 Design Patterns
-
-##### 3.3.1 Singleton
-
-##### 3.3.2 Registry
-
-##### 3.3.3 Front Controller
-
-##### 3.3.4 Factory
-
-### 3.4 Database
-
-#### 3.4.1 Abstraction
-
-#### 3.4.2 PDO Prepared statements
-
-4. Misc
--------
-
-### 4.1 Configuration
-
-### 4.2 Flash
-
-### 4.2 View helpers
-
-#### 4.2.1 Load view helpers libraries
-
-#### 4.2.2 Helpers Definition
-
-#### 4.2.3 Custom Helpers
-
-5. TODO
------------
+[5. TODO](#5-TODO)
 
 ---------------------------------------
 
@@ -536,9 +489,9 @@ A view helper is defined to help retrieve the content of the flash easily.
 
 Just call `flash()` !;
 
-### 4.2 View helpers
+### 4.3 View helpers
 
-#### 4.2.1 Load view helpers libraries
+#### 4.3.1 Load view helpers libraries
 
 View helpers are available to use in the views.
 
@@ -555,7 +508,7 @@ helpers(array('core', 'custom'));
 
 The name of the helpers library need to match the one of the file where it resides.
 
-#### 4.2.2 Helpers Definition
+#### 4.3.2 Helpers Definition
 
 Following helpers are defined in the core library:
 
@@ -567,7 +520,7 @@ Following helpers are defined in the core library:
 *	`submit($value, $options = array())`: Return `submit` tag
 *	`base_url($uri)`: Return url from uri;
 
-#### 4.2.3 Custom Helpers
+#### 4.3.3 Custom Helpers
 
 You can create custom helpers very easily:
 *	Create a new php file in the `helpers/` directory (And not the `core\helpers`, these are restricted !) ...
