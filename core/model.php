@@ -1,6 +1,13 @@
 <?php
 namespace Core;
 
+/**
+ * Model Class - All Models should inherit from this class
+ * 
+ * @author Gaëtan Giraud
+ * @abstract
+ *
+ */
 abstract class Model extends Validation {
 	
 	/**
@@ -21,16 +28,25 @@ abstract class Model extends Validation {
 	
 	/**
 	 * Construct an on object and load the $data provided
-	 * as public properties (optional).
+	 * as public properties.
 	 * 
 	 * @param array $data optional properties
 	 */
-	public function __construct($data = null) {
-		if ($data) {
-			foreach ($data as $key => $value) {
-				$this->{$key} = $value;
+	public function __construct($data = null) 
+	{
+		if (!$data) {
+			$db = Registry::load('database');
+			$fields = $db->getFields($this->_getTableName());
+			$data = array();
+			
+			foreach ($fields as $field) {
+				$data[$field] = '';
 			}
 		}
+		foreach ($data as $key => $value) {
+			$this->{$key} = $value;
+		}
+		
 	}
 	
 	
@@ -38,8 +54,10 @@ abstract class Model extends Validation {
 	 * Get all the records for the calling class.
 	 * 
 	 * @param string $limit
+	 * @return array of objects
 	 */
-	public static function get($order = null, $limit = null) {
+	public static function get($order = null, $limit = null) 
+	{
 		$db = Registry::load('database');
 		$class = get_called_class();
 		
@@ -67,9 +85,10 @@ abstract class Model extends Validation {
 	 * 
 	 * @param array $id = array('primary key' =>  'value')
 	 * @return object|false return an object or false if record not found
+	 * 
 	 */
-	
-	public static function find($id) {
+	public static function find($id) 
+	{
 		$db = Registry::load('database');
 		$class = get_called_class();
 		
@@ -81,9 +100,10 @@ abstract class Model extends Validation {
 				'where' => array($object->_primaryKey => $id),
 				'limit' => 1
 				));
-
+		
 		if ($data && !empty($data)) {
-			$object->set($data[0], true);
+			$object->set($data[0]);
+			
 			return $object;
 		} else {
 			return FALSE;
@@ -100,11 +120,11 @@ abstract class Model extends Validation {
 	 * @param array $data
 	 * @param boolean $force force creation of properties if not already defined
 	 */
-	public function set($data, $force = false) 
+	public function set($data) 
 	{
 		foreach ($data as $key => $value) {
 			// check if property exists - update the value is property is defined
-			if(property_exists($this, $key) || $force) {
+			if(property_exists($this, $key)) {
 				$this->{$key} = $value;
 			}
 		}
@@ -149,9 +169,10 @@ abstract class Model extends Validation {
 	/**
 	 * Delete a record in the database.
 	 * 
-	 * @return 
+	 * @return bool success / failure of the operation
 	 */
-	public function delete() {
+	public function delete() 
+	{
 		$db = Registry::load('database');
 
 		$table = $this->_getTableName();
@@ -165,6 +186,9 @@ abstract class Model extends Validation {
 	/**
 	 * Return the table if defined.
 	 * Otherwise assumes the table name to be the name of the calling class
+	 * 
+	 * @return string
+	 * @access private
 	 */
 	private function _getTableName()
 	{

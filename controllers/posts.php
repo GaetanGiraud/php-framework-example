@@ -1,6 +1,13 @@
 <?php
 namespace Controllers;
 
+/**
+ * This is a skeleton controller demonstrating
+ * a full CRUD application
+ * 
+ * @author Gaëtan Giraud
+ *
+ */
 class Posts extends \Core\Controller {
 	
 	/**
@@ -61,7 +68,7 @@ class Posts extends \Core\Controller {
 	/**
 	 * Show a post
 	 */
-	public function show() {
+	public function show() {	
 		$post = \Models\Posts::find($this->_recordId);
 		
 		if($post) {
@@ -84,7 +91,7 @@ class Posts extends \Core\Controller {
 		
 		// save in the database
 		if ($post->save()) {
-			redirect('/posts/' . $post->id, 'Successfully created post', 'success');
+			redirect('/posts/' . $post->id, 'Successfully updated post', 'success');
 		} else {
 			$this->view('posts/edit', array('post' => $post));
 		}

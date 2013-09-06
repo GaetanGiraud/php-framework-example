@@ -1,12 +1,19 @@
 <?php
 namespace Core;
 
+/**
+ * Parse route and instantiante relevant controller
+ * 
+ * @author Gaëtan Giraud
+ *
+ */
 class Router {
 	
 	/**
 	 * Controller name
 	 * 
 	 * @var string
+	 * @access private
 	 */
 	private $_controller;
 	
@@ -14,6 +21,7 @@ class Router {
 	 * Action name - Default to index
 	 *
 	 * @var string
+	 * @access private
 	 */
 	private $_action = 'index';
 	
@@ -21,6 +29,7 @@ class Router {
 	 * Record ID
 	 *
 	 * @var string
+	 * @access private
 	 */
 	private $_recordId;
 	
@@ -41,7 +50,8 @@ class Router {
 		$route = explode('/', $uri );
 		
 		if (empty($route[0])) {
-			// $route[0] empty indicates the document root - load from Registry
+			// $route[0] empty indicates the document root - 
+			// use root information from Registry
 			
 			$root = Registry::getSetting('root');
 			$this->_controller = $root['controller'];
@@ -50,9 +60,11 @@ class Router {
 		} else {
 			$this->_controller = $route[0];
 			
+				// check is action is defined. default to index
 			if (isset($route[1])) {
 				
 				$class = 'Controllers\\' . $this->_controller;
+				
 				// check if second parameter has been defined as a method
 				if (method_exists($class, $route[1])) {
 						
@@ -79,8 +91,11 @@ class Router {
 
 	}
 	
+	
 	/**
 	 * Getter for _route property
+	 * 
+	 * @return array the parsed route
 	 */
 	public function getRoute() {
 		$route = array(
@@ -91,8 +106,10 @@ class Router {
 		return $route;
 	}
 	
+	
 	/**
 	 * Check if controller exists && instantiate it
+	 * 
 	 * @return Controller object
 	 */
 	private function _loadcontroller() {
@@ -101,14 +118,22 @@ class Router {
 		try {
 			if (class_exists($class, TRUE)) {
 				// if the controller has been defined, instantiate controller
-				return new $class(); 
+				$instantiate = true; 
 			} 
 		} catch (\Exception $e) {
-			
-			// catch the exception sent by __autoload. Do nothing with it.
+			$instantiate = false;
+			// catch the exception sent by __autoload..
 		}
 		
-		// Ensure that no infinite loop occurs by throwing an error 
+		if ($instantiate) {
+			return new $class();
+		}
+		
+		/*
+		 * Ensure that no infinite loop occurs by throwing an error
+		 * if the controller of the application root has not been defined.
+		 * 
+		 */ 
 		
 		$rootPath = normalizePath(Registry::getSetting('appRoot')['path']);
 		$uri = normalizePath($_SERVER["REQUEST_URI"]);

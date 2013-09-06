@@ -1,6 +1,12 @@
 <?php
 namespace Core;
 
+/**
+ * Model validation class
+ * 
+ * @author Gaëtan Giraud
+ *
+ */
 abstract class Validation {
 	/**
 	 * Records validation rules.
@@ -35,28 +41,25 @@ abstract class Validation {
 	 */
 	protected function _validate($data) 
 	{
-			// if there are validation rules defined, process them
-		if(!empty($this->_validationRules)) {
+		if(!empty($this->_rules)) {
 				
-				// for each validation rule, check if the provided data meet the rule
-			foreach($this->_validationRules as $propery => $rule) {
-	
-				$method = '_' . $rule; // one method per rule
+			foreach($this->_rules as $propery => $rules) {
 				
-				if(method_exists($this, $method)) {
+				// rules should be comma delimited
+				$rules = explode(',',$rules);
+				
+				foreach ($rules as $rule) {
 					
+					$method = $this->_getRuleMethod($rule);
+					
+					// perform the validation
 					call_user_func(array($this, $method), $propery, $data);
-						
-				} else {
-					// TODO add error processing if validation does not exist
-					// do nothing for now
 				}
-					
 			}
 	
 		}
 	
-		// if the validation error array is not empty, validation failed
+		// if the validation error array is not empty, validation fails
 		if (!empty($this->_validationErrors)) {
 			return FALSE;
 		}
@@ -64,6 +67,53 @@ abstract class Validation {
 		return TRUE;
 	}
 	
+	/**
+	 * Add validation error message
+	 * 
+	 * @param string $property
+	 * @param string $ermsg
+	 */
+	protected function _addValidationError($property, $ermsg)
+	{
+		// instantiate the array if not set
+	 	if (!isset($this->_validationErrors[$property]) ) {
+	 		$this->_validationErrors[$property] = array();
+	 	
+	 	}
+ 		$this->_validationErrors[$property][] = $ermsg;
+	}
+	
+	
+	/**
+	 * Give a validation rule in input
+	 * Return the corresponding method if it exists.
+	 * 
+	 * @param string $rule
+	 * @return string 
+	 */
+	private function _getRuleMethod($rule)
+	{
+		if(method_exists($this, $rule)) {
+			$method = $rule;
+		} else if(method_exists($this, '_' . $rule)) {
+			// cater for _ access indicator
+			$method = '_' . $rule ;
+		} else {
+			trigger_error('Trying to apply non existant
+								validation rule to model ' . get_class($this), E_USER_WARNING);
+		}
+		
+		return $method;
+	}
+	
+	/*===================================================================================
+	 * 
+	 * Validation methods
+	 * 
+	 * Validation methods must alway accept a $proterty and the $data set 
+	 * to be validated against
+	 * 
+	 */
 	
 	/**
 	 * check if $property is defined inside the $data set.
@@ -75,11 +125,15 @@ abstract class Validation {
 	{		
 		if ( !isset ($data[$property]) || empty($data[$property]) ) {
 				// if the property is not set or is empty, record a validation error
-			$this->_validationErrors[$property] = ucfirst($property) . ' is required';
-				
+			$this->_addValidationError($property, ucfirst($property) . ' is required!');
 		}
 	}
 	
+	/*
+	 * 
+	 * Other validation rules to be implemented
+	 * 
+	 */
 	private function _unique($property, $data) 
 	{
 		//TODO Create unique validation

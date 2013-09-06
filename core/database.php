@@ -2,24 +2,33 @@
 namespace Core;
 /**
  * Database management and access class
- * This is a very basic level of abstraction
+ * 
+ * This is a basic level of abstraction and
+ * is compatible with MySQL only at this point.
+ * 
+ * Usage of PDO should allow to further develop 
+ * compatibility rather easily.
+ * 
+ * @author Gaëtan Giraud
+ * 
  */
 
 class Database {
 	
 	/**
 	 * Record the connection
+	 * 
+	 * @access private
+	 * 
 	 */
 	private $_connection;
-	/**
-	 * Queries which have been executed and then "saved for later"
-	 */
-	// private $_queryCache = array();
 	
 	/**
 	 * Store the query to be built
 	 * 
 	 * @var String PDO Prepared statement string
+	 * @access private
+	 * 
 	 */
 	private $_query;
 	
@@ -27,6 +36,7 @@ class Database {
 	 * Record the statement data for use in the prepared statement
 	 * 
 	 * @var Associative Array
+	 * @access private
 	 */
 	private $_stmtData = array ();
 	
@@ -34,26 +44,34 @@ class Database {
 	 * The PDO statement to be executed
 	 * 
 	 * @var PDOStatement
+	 * @access private
 	 */
 	private $_stmt;
 	
 	/**
 	 * Data which has been prepared and then "saved for later"
+	 * @access private
+	 * 
 	 */
 	private $_dataCache = array ();
-	
+
 	/**
-	 * Record of the last query
+	 * 
+	 * Empty constructor
+	 * 
 	 */
-	private $_last;
-	
-	public function __construct() {
+	public function __construct() 
+	{
 	}
 	
 	/**
-	 * All purpose query functionality. To be used when no other option is available
+	 * All purpose query functionality. 
+	 * 
+	 * To be used with caution when no other option is available!
+	 * 
 	 * @param String $query the sql query to be performed
 	 * @return array of data fetched from database
+	 * 
 	 */
 	public function query($query)
 	{
@@ -91,8 +109,12 @@ class Database {
 	 *        	),
 	 *        	'limit' => 1
 	 *        	)
+	 *        
+	 *  @return array array of data feched inside the database
+	 *  
 	 */
-	public function select($table, $params = NULL) {
+	public function select($table, $params = NULL) 
+	{
 		// If no parameters provided select everything from the table
 		if (gettype ( $params ) !== 'array') {
 			
@@ -168,6 +190,7 @@ class Database {
 		$this->_prepareQuery();
 		
 		$result = $this->_executeQuery();
+		
 		if ($result !== TRUE) {
 			return $result;
 		} else {
@@ -189,6 +212,7 @@ class Database {
 	 *        	'field2' => 'value2'
 	 *        	)
 	 * @return TRUE || PDO Error information
+	 * 
 	 */
 	public function update($table, $recordId, $updateData) 
 	{	
@@ -251,6 +275,16 @@ class Database {
 	}
 	
 	/**
+	 * Get the table fields
+	 * 
+	 * @param string $table
+	 * @return array
+	 */
+	public function getFields($table) {
+		return $this->_list_fields($table);
+	}
+	
+	/**
 	 * Create a new database connection using PDO
 	 *
 	 * @param string $host
@@ -258,12 +292,14 @@ class Database {
 	 * @param string $username
 	 * @param string $passwd
 	 * @param string $options
+	 * 
+	 * @access private
 	 */
-	private function _newConnection($host, $dbname, $username, $passwd, $options = NULL) {
-		//TODO get db info from configuration
+	private function _newConnection($host, $dbname, $username, $passwd, $options = NULL) 
+	{
 		// setting default options if not provided
 		$options || $options = array (
-		\PDO::MYSQL_ATTR_FOUND_ROWS => TRUE
+			\PDO::MYSQL_ATTR_FOUND_ROWS => TRUE
 		);
 	
 		try {
@@ -281,7 +317,8 @@ class Database {
 	 * Connect to the database.
 	 * Prepare the query and perform some error management.
 	 * 
-	 * @return void
+	 * @access private
+	 * 
 	 */
 	private function _prepareQuery() 
 	{
@@ -309,6 +346,8 @@ class Database {
 	 * Executes query and return sucess/failure of execution
 	 * 
 	 * @return boolean PDOStatement::errorInfo
+	 * @access private
+	 * 
 	 */
 	private function _executeQuery() 
 	{
@@ -327,19 +366,13 @@ class Database {
 	 * 
 	 * @param array $params
 	 *        	see select, insert, update, delete functions for format definition
-	 * @return void
+	 * @access private
 	 */
 	private function _processParams($params, $clause) 
 	{
 		$method = '_' . strtolower($clause);
 		
 		! isset ( $params[$clause] ) || ! $params [$clause]  || call_user_func(array($this, $method), $params [$clause] );
-		
-/* 		// if provided an order clause cal _order private function
-		! isset ( $params ['order'] ) || ! $params ['order'] || $this->_order ( $params ['order'] );
-		
-		// if provided a limit clause call _limit private function
-		! isset ( $params ['limit'] ) || ! $params ['limit'] || $this->_limit ( $params ['limit'] ); */
 	}
 	
 	
@@ -353,6 +386,8 @@ class Database {
 	 *        	'field2' => 'value2'
 	 *        	)
 	 * @return void
+	 * @access private
+	 * 
 	 */
 	private function _where($whereData) 
 	{
@@ -391,6 +426,8 @@ class Database {
 	 *        	'order' => 'ASC'
 	 *        	)
 	 * @return void
+	 * @access private
+	 * 
 	 */
 	private function _order($orderData) 
 	{
@@ -406,6 +443,8 @@ class Database {
 	 * 
 	 * @param int $numRows        	
 	 * @return void
+	 * @access private
+	 * 
 	 */
 	private function _limit($numRows) 
 	{
@@ -417,9 +456,11 @@ class Database {
 	 * List fields from a table
 	 * 
 	 * @param string $table
-	 * @return boolean
+	 * @return array
+	 * @access private
+	 * 
 	 */
-	private function _list_fields($table = '')
+	private function _list_fields($table = null)
 	{
 		// Is there a cached result?
 		if (isset($this->data_cache['field_names'][$table]))
@@ -427,7 +468,7 @@ class Database {
 			return $this->data_cache['field_names'][$table];
 		}
 	
-		if ($table == '')
+		if (!$table)
 		{
 			return FALSE;
 		}
@@ -437,23 +478,20 @@ class Database {
 					
 		$results = $this->query($sql);
 		
-		$retval = array();
-		
-
+		$retVal = array();
 		
 		foreach ($results as $row)
 		{
-			if (isset($row['Field']))
-			{
-				$retval[] = $row['Field'];
+			if (isset($row['Field'])){
+				$retVal[] = $row['Field'];
 			} else if (isset($row['FIELD'])) {
-				$retval[] = $row['FIELD'];
+				$retVal[] = $row['FIELD'];
 			} else {
-				$retval[] = current($row);
+				$retVal[] = current($row);
 			}
 		}
 
-		$this->data_cache['field_names'][$table] = $retval;
+		$this->data_cache['field_names'][$table] = $retVal;
 		return $this->data_cache['field_names'][$table]; 
 	}
 	
@@ -465,9 +503,10 @@ class Database {
 	 * @param array $data
 	 * @param string $id
 	 * @return array:
+	 * @access private
 	 */
-	
-	private function _sanitizeData($table, $data, $id = null) {		
+	private function _sanitizeData($table, $data, $id = null) 
+	{		
 		// remove the id from the data
 		! $id || $data =  array_diff_key($data, $id);
 
@@ -480,7 +519,8 @@ class Database {
 	/**
 	 * Reset the connection
 	 */
-	public function __destruct() {
+	public function __destruct() 
+	{
 		$this->_connection = null;
 	}
 }

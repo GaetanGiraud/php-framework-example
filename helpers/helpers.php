@@ -1,5 +1,15 @@
 <?php
-	
+/**
+ * View helper functions.
+ * 
+ * To be called exclusively inside a view.
+ * 
+ * @author Gaëtan Giraud
+ */
+
+/**
+ * @return Core\Flash
+ */
 function flash()
 {
 	return Core\Flash::retrieve();
@@ -7,7 +17,7 @@ function flash()
 
 
 /**
- * Create anchor links with fully qualified urls
+ * Create anchor with fully qualified urls
  * 
  * @param string $url
  * @param string $value
@@ -33,15 +43,21 @@ function validationErrors( Core\Model $object)
 {
 	$html = '';
 	if ($object->getValidationErrors() !== array() ) {
-		$html .= '<ul>';
-		foreach ($object->getValidationErrors() as $field => $error) {
-			$html .= '<li>'. $error . '</li>';
+		
+		foreach ($object->getValidationErrors() as $field => $errors) {
+			$html .= '<h3>'. ucfirst($field) . '</h3>';
+			$html .= '<ul>';
+			foreach ($errors as $error) {
+				$html .= '<li>'. $error . '</li>';
+			}
+			$html .= '</ul>';
 		}
-		$html .= '</ul>';
+		
 	} 
 	
 	return $html;
 }
+
 
 /**
  * Text input helper
@@ -58,6 +74,7 @@ function input($name, $options = array())
 	$html .= '>';
 	return $html;
 }
+
 
 /**
  * Textarea helper
@@ -107,6 +124,8 @@ function base_url($uri)
 /**
  * Process html tag options 
  * 
+ * @param array $options
+ * @return string
  */
 function processOptions($options) 
 {

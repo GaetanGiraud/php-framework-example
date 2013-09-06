@@ -3,59 +3,50 @@
 namespace Core;
 
 /**
- * Defines common features for all controllers
+ * Defines common behaviours of all controllers
+ * 
  * @author GM Giraud
+ * @abstract
  *
  */
 abstract class Controller {
-	// default action is index
-	protected $_action = 'index';
-	protected $_recordId = null;
-	protected $_model;
-	private $_layoutLoaded = false;
 	
 	/**
-	 * Controller identifies and call the requested action
-	 * from the route stored inside the router
-	 * @param array $route route as parsed by the router
+	 * Action to be performed - default to index
+	 * 
+	 * @var string
+	 * @access protected
+	 */
+	protected $_action = 'index';
+	
+	/**
+	 * Potential route defined record
+	 * 
+	 * @var string || int
+	 * @access protected
+	 * 
+	 */
+	protected $_recordId = null;
+	
+	/**
+	 * Flag indicating if the layout has been loaded
+	 *
+	 * @var bool
+	 * @access private
+	 *
+	 */
+	private $_layoutLoaded = false;
+	
+	
+	
+	
+	
+	/**
+	 * On instantiation call the route defined action
+	 * 
 	 */
 	public function __construct() 
 	{
-		// recover the route from the router in the registry
-	//	$route = Registry::load('router')->getRoute();
-		
-		/* // $route empty indicates the document root
-		if (!empty($route[0])) { 
-
-			if (isset($route[1])) {
-				
-				// check if second parameter has been defined as a method
-				if (method_exists($this, $route[1])) {
-					
-					// if TRUE, record it as an action
-					$this->_action = $route[1];
-				} else {
-					// otherwise it is considered to be a record id
-					$this->_recordId = $route[1];
-					
-					// if a third parameter is provided then it is an action
-					if (isset($route[2])) {
-						$this->_action = $route[2];
-					} else {
-						// if no action is specified, it defaulted to show
-						$this->_action = 'show';
-					}
-					
-				}
-				
-			} */
-						
-	/* 	} else {
-			// 
-		}  */
-		
-		// call the action - index is called is no action was provided
-	
 		$this->_callAction();
 	}
 	
@@ -64,20 +55,22 @@ abstract class Controller {
 	 * 
 	 * @param string $view name of the view to be loaded
 	 * @param array $data array of data to be used inside the view
+	 * @access protected
+	 * 
 	 */
-	
 	protected function view($view, $data = array())
 	{
-		// check if the layout has been rendered
+			// check if the layout has been rendered
 		if (! $this->_layoutLoaded) {
-			// if not, render the layout and pass the requested 
-			// view inside the $data['view'] variable
-			
+				
+				// if not, render the layout and pass the requested 
+				// view inside the $data['view'] variable
 			$filename = BASE_PATH . 'views/_layout.php';
 			$data['view'] = $view;
 			$this->_layoutLoaded = true;
 			
 		} else {
+				// just load the requested view
 			$filename = BASE_PATH . 'views/' . $view . '.php';
 		}
 		
@@ -94,6 +87,8 @@ abstract class Controller {
 	/**
 	 * Perform the action 
 	 * 
+	 *  @access private
+	 *  
 	 */
 	private function _callAction() 
 	{

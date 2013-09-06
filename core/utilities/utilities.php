@@ -1,4 +1,11 @@
 <?php
+/**
+ *
+ * Utilities functions to be used indiscriminately across the framework
+ *
+ * @author Gaëtan Giraud
+ * 
+ */
 
 /**
  * Redirect with an optional Flash message
@@ -28,7 +35,7 @@ function redirect($path, $message = null, $severity = null)
  */
 function redirectToRoot($message = null, $severity = null) 
 {
-	
+	// get the root path
 	$rootPath = Registry::getSetting('appRoot')['path'];
 	
 	redirect('/' . $rootPath, $message, $severity);
@@ -36,11 +43,13 @@ function redirectToRoot($message = null, $severity = null)
 }
 
 /**
- * normalize path
+ * Normalize a path into a common format
+ * to facilitate routing and comparisons
  * 
  * @param string $path
  * @return string
  */
-function normalizePath($path) {
+function normalizePath($path) 
+{
 	return strtolower(trim(ltrim($path, '/'), '/'));
 }
