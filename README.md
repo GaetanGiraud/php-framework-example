@@ -1,20 +1,23 @@
 Light Weight PHP Framework
 ==========================
 
+---------------------------------------
+
 1. Goal
-----
-The goal of this framework is to demonstrate important Web Development concepts in a simple (yet ully functional) way.
+-------
+The goal of this framework is to demonstrate important (Web) Development concepts in a simple (yet fully functional) way.
 
 The concepts demonstrated in this framework are:
-* MVC
+* Model View Controllers
 * OOP - Inheritance, Abstract classes
-* Design patterns: Factory
-* Lazy Load
+* Design patterns: Singleton, Registry, Factory
+* Lazy Loading
 * Database - Abstraction, PDO
 
+---------------------------------------
 
 2. How to use
-----------
+-------------
 
 This framework implements a traditional MVC framework.
 
@@ -22,12 +25,21 @@ There are a small set of rules that need to be followed:
 
 * 	The folder structure as defined must be respected.
 
-	Controllers in the Controllers directory etc ...
+	*	Controllers in the Controllers directory.
+	
+	*	Models in the Models directory.
+	
+	* 	Views in the Views directory.
+	
+	*	Helpers in the Helpers directory.
+	
+	
   
 *	Models and Controllers should have the same names.
 *	Namespaces: 
 
 	Models should belong to the namespace **Models**.
+	
 	Controller to the namespace **Controllers**.
 	
 *	Files should be named after the Controller / Model class
@@ -35,21 +47,21 @@ There are a small set of rules that need to be followed:
 
 #### 2.1 Create and set up a Controller
 
-##### 2.1.1 Create a controler
+##### 2.1.1 Create a controller
 
 To create a controller, create a php file. 
 
-	```php
-	controllers/resource.php:
+```php
+controllers/resource.php:
+
+namespace Controllers;
+
+class Resource extends \Core\Controller {
 	
-	namespace Controllers;
-	
-	class Resource extends \Core\Controller {
-		
-		public function index() {
-			// action
-		}
-	}```
+	public function index() {
+		// action
+	}
+}```
 
 ##### 2.1.1 Create an action
 
@@ -75,60 +87,61 @@ Public functions (To use in the view for example):
 
 
 
-## Concepts
+3. Concepts
+-----------
+
+---------------------------------------
+
+### 3.1 MVC
+
+#### 3.2 Model
+
+#### 3.3 View
+
+#### 3.4 Controller
+
+---------------------------------------
+
+### 3.2 Lazy loading
+
+---------------------------------------
+
+### 3.3 Object Oriented Programming
+
+#### 3.3.1 Inheritance
 
 
+#### 3.3.2 Abstract classes
+
+---------------------------------------
+
+### 3.3 Design Patterns
+
+##### 3.3.1 Singleton
 
 
-### MVC
+##### 3.3.2 Registry
 
-#### Model
-
-#### View
+##### 3.3.3 Front Controller
 
 
-#### Controller
+##### 3.3.4 Factory
+
+---------------------------------------
+
+### 3.4 Database
+
+#### 3.4.1 Abstraction
 
 
+#### 3.4.2 PDO Prepared statements
 
-### Lazy loading
+---------------------------------------
 
+### 4 Misc
 
+#### 4.1 Config file
 
-### Object Oriented Programming
-
-####Inheritance
-
-
-#### Abstract classes
-
-
-
-#### Design Patterns
-
-##### Singleton
-
-
-##### Registry
-
-##### Front Controller
-
-
-##### Factory
-
-
-### Database
-
-#### Abstraction
-
-
-#### PDO Prepared statements
-
-
-### Misc
-
-#### Config file
-
-#### View helpers
+#### 4.2 View helpers
 
 
