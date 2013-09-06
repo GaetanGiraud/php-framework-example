@@ -8,8 +8,11 @@
 		<?php  $this->view('components/flash'); ?>
 	</div>
 </div>
-	
-<?php $this->view($view, $data); ?>
+
+<div class="container">
+	<?php $this->view($view, $data); ?>
+</div>
+
 
 
 <!-- End Content -->

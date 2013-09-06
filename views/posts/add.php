@@ -1,4 +1,9 @@
-<h1>Create a new post here</h1>
+<ul class = 'nav nav-tabs'>
+		<li><a href="/posts">Index</a></li>
+		<li><a href="/">Welcome's page</a></li>
+</ul>
+
+<h1>Create a Post</h1>
 
 <?php validationErrors($post); ?>
 
@@ -13,5 +18,3 @@
 	</div>
 	<input type="submit" id="submit" name="submit" value="Create Post" class="btn btn-default">
 </form>
-
-<a href="/posts">Back</a>

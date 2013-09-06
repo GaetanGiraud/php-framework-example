@@ -1,6 +1,11 @@
-<h1>Edit record here</h1>
+<ul class = 'nav nav-tabs'>
+		<li><a href="/posts">Index</a></li>
+		<li><a href="/">Welcome's page</a></li>
+</ul>
 
-<?= validationErrors($post); ?>
+<h1>Edit Post</h1>
+
+<?php echo validationErrors($post); ?>
 
 <form action="/posts/update" method="post">
 	
@@ -8,15 +13,13 @@
 	
 	<div class="form-group">
 		<label for="title">Title</label>
-		<?= input('title', array('value' => $post->title, 'class' => 'form-control' ) ); ?>
+		<?php echo input('title', array('value' => $post->title, 'class' => 'form-control' ) ); ?>
 	</div>
 	
 	<div class="form-group">
 		<label for="body">Body</label>
-		<?= textarea('body', $post->body,  array('class' => 'form-control', 'rows' => 20 ) ); ?>
+		<?php echo textarea('body', $post->body,  array('class' => 'form-control', 'rows' => 20 ) ); ?>
 	</div>
-	<?= submit("Save Changes");?>
+	<?php echo submit("Save Changes", array('class' => 'btn btn-default' ));?>
 
 </form>
-
-<a href="/posts">Back</a>

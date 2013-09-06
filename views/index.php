@@ -6,15 +6,14 @@
 		<ul class="nav navbar-nav">
 			<li class="active"><a href="#compatibility">Compatibility</a></li>
 			<li ><a href="#dbSupport">Database Support</a></li>
+			<li ><a href="#cssJs">CSS &amp; JS</a></li>
+			<li ><a href="#next">What to do next?</a></li>
 		</ul>
-
-		<p class="navbar-text">This is the welcome page - remove it and make
-			it your own!</p>
 	</div>
 
 
 </nav>
-<div id="welcome" class="container">
+<div id="welcome">
 
 	<div class='jumbotron'>
 		<h1><?php echo FRAMEWORK ?> version <?php echo frameworkVersion() ?></h1>
@@ -54,8 +53,8 @@
 	<hr />
 	
 	<section id = 'cssJs'>
-		<h3>Twitter Bootstrap v 3 - jQuery</h3>
-		<p class="well">Twitter Bootstrap v3 and jQuery are included per
+		<h3>Twitter Bootstrap v 3 -  FontAwsome - jQuery</h3>
+		<p class="well">Twitter Bootstrap v3, FontAwsome and jQuery are included per
 			default.
 		
 		
