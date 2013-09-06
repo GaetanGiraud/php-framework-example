@@ -90,9 +90,9 @@ Public functions (To use in the view for example):
 
 #### 2.3 Models
 
-In Object Relationship Mapping fashion, each table row gets represented by an object instance of the corresponding model.
+In Object Relational Mapping fashion, each table row gets represented by an object instance of the corresponding model.
 
-As default the framework assumes that the datable model and the model class share the same name.
+As default the framework assumes that the database model and the model class share the same name.
 
 ##### 2.3.1 Create a model
 
@@ -107,7 +107,7 @@ namespace Models;
 
 class Ressource extends \Core\Model {
 	
-	} 
+} 
 ```
 ##### 2.3.2 Operations
 
@@ -119,7 +119,7 @@ class Ressource extends \Core\Model {
 
 * `$object->set($data)` : Set the object properties to the ones provided.
 
-* `$object->save($data)`: Update database with the changes. For new objects insert a new row.
+* `$object->save()`: Update database with the changes. For new objects insert a new row in the database.
 
 * `$object->delete()`: Delete the object in the database.
 
@@ -128,11 +128,11 @@ class Ressource extends \Core\Model {
 
 ##### Set up validation
 
-Define validation rules in the `rules` array
+Define validation rules in the `$_rules` array property of the model.
 
 ```php
 protected $_rules = array (
-		'property1' => 'comma separated list of validation rules',
+		'property1' => 'required,email,unique',
 		'property2' => 'comma separated list of validation rules'
 );
 ```
@@ -147,7 +147,7 @@ The method should take as arguments:
 
 Validation errors are recorded using the `_addValidationError($property, $errMsg)` method taking as arguments:
 * `$property`: property under scrutiny
-* `$errMsg`: error message message
+* `$errMsg`: error message
 
 
 ```php
@@ -156,8 +156,8 @@ public function _rule($property, $data)
 	
 	if ( ! test ) { // define the test to be performed
 	
-		// record a validation error using the model `_addValidationError` mthod
-		$this->_addValidationError($property, ucfirst($property) . ' should be not Null');
+		// record a validation error
+		$this->_addValidationError($property, 'Error message');
 	}
 }
 ```
@@ -166,7 +166,7 @@ public function _rule($property, $data)
 
 ###### Custom primary key 
 
-To change the default ( `id` ), add to your model the following declaration:
+To change the default primary key ( set to `id` ), add to your model the following declaration:
 	
 ```php	
 protected $_primaryKey = 'myPrimaryKey';
@@ -174,7 +174,7 @@ protected $_primaryKey = 'myPrimaryKey';
 
 ###### Custom table name
 
-To change the default ( set to the model class name ), add to your model the following declaration:
+To change the default table name ( set to the model class name ), add to your model the following declaration:
 	
 ```php	
 protected $_table = 'myTable';
@@ -198,7 +198,7 @@ class MyResource extends Controller {
 
 }
 ```
-You can also call subview inside a view:
+You can also call a subview inside a view:
 
 ```php
 <html>
@@ -224,6 +224,9 @@ You can pass data to a view by passing an associative array as argument to the m
 $this->view($view, $data = array( 'ressource'= > $myRessource ));
 ```
 
+The data is `exploded` and made avalable as separate variables.
+In the example above, the `$ressource` variable is made avaible in the view.
+
 ##### 2.4.3 Layout file
 
 The `_layout.php` file always gets loaded first.
@@ -233,7 +236,7 @@ The original call gets passed through the `$view` variable, and data through `da
 <?php $this->view($view, $data); ?>
 ```
 
-Do not change the name of these variables!
+Do not change the name of the `$view` and `$data` variables!
 
 3. Concepts
 -----------
