@@ -9,17 +9,19 @@ The goal of this framework is to demonstrate important (Web) Development concept
 
 The concepts demonstrated in this framework are:
 * Model View Controllers
+* Oject Relational Mapping
 * OOP - Inheritance, Abstract classes
 * Design patterns: Singleton, Registry, Factory
 * Lazy Loading
 * Database - Abstraction, PDO
 
----------------------------------------
 
 2. How to use
 -------------
 
 This framework implements a traditional MVC framework.
+
+All filenames are given related the `BASE_PATH` of the framework.
 
 #### 2.1 Formating Rules
 
@@ -27,13 +29,13 @@ There are a small set of rules that need to be followed:
 
 * 	The folder structure as defined must be respected.
 
-	*	Controllers in the Controllers directory.
+	*	Controllers in the `controllers/` directory.
 	
-	*	Models in the Models directory.
+	*	Models in the `models/` directory.
 	
-	* 	Views in the Views directory.
+	* 	Views in the `views/` directory.
 	
-	*	Helpers in the Helpers directory.
+	*	Helpers in the `helpers/` directory.
 	
 	
   
@@ -47,7 +49,7 @@ There are a small set of rules that need to be followed:
 *	Files should be named after the Controller / Model class
 
 
-#### 2.2 Create and set up a Controller
+#### 2.2 Controllers
 
 ##### 2.2.1 Create a controller
 
@@ -63,7 +65,8 @@ class Resource extends \Core\Controller {
 	public function index() {
 		// action
 	}
-}```
+}
+```
 
 ##### 2.2.2 Create an action
 
@@ -83,7 +86,7 @@ Public functions (To use in the view for example):
 * getController: Returns controller name
 * getAction: Returns action name
 
-#### 2.3 Create and set up a Model
+#### 2.3 Models
 
 In Object Relationship Mapping fashion, each table row gets represented by an object instance of the corresponding model.
 
@@ -172,30 +175,28 @@ To change the default ( set to the model class name ), add to your model the fol
 ```php	
 protected $_table = 'myTable';
 ```
-	
-	
-	
-		}
+
+
 To create an action, simply create a `public function` named after the action
 	
 
 ##### 2.3.3 Available methods
 
 Protected properties (only reachable inside the controller): 
-* _controller: The name of the controller
+* `_controller`: The name of the controller
 
-* _action: The action name
+* `_action`: The action name
 
-* _recordId: The id of the record (if defined in the route)
+* `_recordId`: The id of the record (if defined in the route)
 
 Public functions (To use in the view for example):
-* getController: Returns controller name
-* getAction: Returns action name
+* `getController`: Returns controller name
+* `getAction`: Returns action name
 
 
-#### 2.4 Create views
+#### 2.4 Views
 
-##### 2.4.1 Call view
+##### 2.4.1 Caling a view
 
 Calling a view inside a controller:
 
@@ -249,8 +250,6 @@ Do not change the name of these variables!
 3. Concepts
 -----------
 
----------------------------------------
-
 ### 3.1 MVC
 
 #### 3.2 Model
@@ -259,11 +258,8 @@ Do not change the name of these variables!
 
 #### 3.4 Controller
 
----------------------------------------
-
 ### 3.2 Lazy loading
 
----------------------------------------
 
 ### 3.3 Object Oriented Programming
 
@@ -272,7 +268,6 @@ Do not change the name of these variables!
 
 #### 3.3.2 Abstract classes
 
----------------------------------------
 
 ### 3.3 Design Patterns
 
@@ -286,7 +281,6 @@ Do not change the name of these variables!
 
 ##### 3.3.4 Factory
 
----------------------------------------
 
 ### 3.4 Database
 
@@ -295,7 +289,6 @@ Do not change the name of these variables!
 
 #### 3.4.2 PDO Prepared statements
 
----------------------------------------
 
 ### 4 Misc
 
