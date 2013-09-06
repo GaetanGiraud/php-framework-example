@@ -9,9 +9,9 @@ The goal of this framework is to demonstrate important (Web) Development concept
 
 The concepts demonstrated in this framework are:
 * Model View Controllers
-* Oject Relational Mapping
+* Object Relational Mapping
 * OOP - Inheritance, Abstract classes
-* Design patterns: Singleton, Registry, Factory
+* Design patterns: Singleton, Registry, Factory, Front Controller
 * Lazy Loading
 * Database - Abstraction, PDO
 
@@ -46,14 +46,16 @@ There are a small set of rules that need to be followed:
 	
 	Controller to the namespace **Controllers**.
 	
-*	Files should be named after the Controller / Model class
+*	Files should be named after the Controller / Model class.
 
 
 #### 2.2 Controllers
 
 ##### 2.2.1 Create a controller
 
-To create a controller, create a php file. 
+To create a controller, create a class that extends the \Core\Controller class.
+Make sure the filename match the class name (case insensitive).
+Don't forget the namespace declaration. 
 
 ```php
 controllers/resource.php:
@@ -76,15 +78,15 @@ To create an action, simply create a `public function` named after the action
 ##### 2.2.3 Available methods
 
 Protected properties (only reachable inside the controller): 
-* _controller: The name of the controller
+* `_controller`: The name of the controller
 
-* _action: The action name
+* `_action`: The action name
 
-* _recordId: The id of the record (if defined in the route)
+* `_recordId`: The id of the record (if defined in the route)
 
 Public functions (To use in the view for example):
-* getController: Returns controller name
-* getAction: Returns action name
+* `getController`: Returns controller name
+* `getAction`: Returns action name
 
 #### 2.3 Models
 
@@ -94,14 +96,16 @@ As default the framework assumes that the datable model and the model class shar
 
 ##### 2.3.1 Create a model
 
-To create a controller, create a php file. 
+To create a nodel, create a class that extends the \Core\Model class.
+Make sure the filename match the class name (case insensitive).
+Don't forget the namespace declaration. 
 
 ```php
-controllers/resource.php:
+models/resource.php:
 
 namespace Models;
 
-class myModel extends \Core\Model {
+class Ressource extends \Core\Model {
 	
 	} 
 ```
@@ -176,22 +180,6 @@ To change the default ( set to the model class name ), add to your model the fol
 protected $_table = 'myTable';
 ```
 
-
-To create an action, simply create a `public function` named after the action
-	
-
-##### 2.3.3 Available methods
-
-Protected properties (only reachable inside the controller): 
-* `_controller`: The name of the controller
-
-* `_action`: The action name
-
-* `_recordId`: The id of the record (if defined in the route)
-
-Public functions (To use in the view for example):
-* `getController`: Returns controller name
-* `getAction`: Returns action name
 
 
 #### 2.4 Views
